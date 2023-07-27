@@ -3,10 +3,14 @@ import type { LeaseQueryArgs } from "./types";
 import { GraphQLError } from "graphql";
 
 export class LeaseController {
-  public static routeQuery({ unit_id, id }: LeaseQueryArgs) {
+  public static routeSingle({ id }: LeaseQueryArgs) {
     if (typeof id === "number") {
       return this.queryByID(id);
     }
+    throw new GraphQLError("Leases must be queried by ID");
+  }
+
+  public static routeMulti({ unit_id }: LeaseQueryArgs) {
     if (typeof unit_id === "number") {
       return this.queryByUnitID(unit_id);
     }

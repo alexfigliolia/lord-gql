@@ -4,6 +4,7 @@ import {
   GraphQLString,
   GraphQLInt,
   GraphQLObjectType,
+  GraphQLList,
 } from "graphql";
 import { UserController } from "./UserController";
 import type { UserArgs } from "./types";
@@ -41,12 +42,21 @@ export const user: GraphQLFieldConfig<any, any> = {
       type: GraphQLInt,
       description: "primary key",
     },
+  },
+  resolve: (_: any, args: UserArgs) => {
+    return UserController.routeSingle(args);
+  },
+};
+
+export const users: GraphQLFieldConfig<any, any> = {
+  type: new GraphQLList(UserType),
+  args: {
     name: {
       type: GraphQLString,
       description: "search by name",
     },
   },
   resolve: (_: any, args: UserArgs) => {
-    return UserController.routeQuery(args);
+    return UserController.routeMulti(args);
   },
 };

@@ -3,12 +3,16 @@ import type { UserArgs } from "./types";
 import { GraphQLError } from "graphql";
 
 export class UserController {
-  public static routeQuery(args: UserArgs) {
-    if (typeof args.id === "number") {
-      return this.queryByID(args.id);
+  public static routeSingle({ id }: UserArgs) {
+    if (typeof id === "number") {
+      return this.queryByID(id);
     }
-    if (typeof args.name === "string") {
-      return this.searchByName(args.name);
+    throw new GraphQLError("Unimplemented");
+  }
+
+  public static routeMulti({ name }: UserArgs) {
+    if (typeof name === "string") {
+      return this.searchByName(name);
     }
     throw new GraphQLError("Unimplemented");
   }

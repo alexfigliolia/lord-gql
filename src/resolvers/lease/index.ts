@@ -5,6 +5,7 @@ import {
   GraphQLObjectType,
   GraphQLString,
   GraphQLBoolean,
+  GraphQLList,
 } from "graphql";
 import { LeaseController } from "./LeaseController";
 import type { LeaseQueryArgs } from "./types";
@@ -46,12 +47,21 @@ export const lease: GraphQLFieldConfig<any, any> = {
       type: GraphQLInt,
       description: "primary key",
     },
+  },
+  resolve: (_: any, args: LeaseQueryArgs) => {
+    return LeaseController.routeSingle(args);
+  },
+};
+
+export const leases: GraphQLFieldConfig<any, any> = {
+  type: new GraphQLList(LeaseType),
+  args: {
     unit_id: {
       type: GraphQLInt,
       description: "search by the unit's id",
     },
   },
   resolve: (_: any, args: LeaseQueryArgs) => {
-    return LeaseController.routeQuery(args);
+    return LeaseController.routeMulti(args);
   },
 };

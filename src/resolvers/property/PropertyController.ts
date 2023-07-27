@@ -3,10 +3,14 @@ import type { PropertyQueryArgs } from "./types";
 import { GraphQLError } from "graphql";
 
 export class PropertyController {
-  public static routeQuery({ organization_id, id }: PropertyQueryArgs) {
+  public static routeSingle({ id }: PropertyQueryArgs) {
     if (typeof id === "number") {
       return this.queryByID(id);
     }
+    throw new GraphQLError("Properties must be queried by ID");
+  }
+
+  public static routeMulti({ organization_id }: PropertyQueryArgs) {
     if (typeof organization_id === "number") {
       return this.queryByOrganizationID(organization_id);
     }

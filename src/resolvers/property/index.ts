@@ -4,6 +4,7 @@ import {
   GraphQLInt,
   GraphQLObjectType,
   GraphQLString,
+  GraphQLList,
 } from "graphql";
 import { PropertyController } from "./PropertyController";
 import type { PropertyQueryArgs } from "./types";
@@ -61,12 +62,21 @@ export const property: GraphQLFieldConfig<any, any> = {
       type: GraphQLInt,
       description: "primary key",
     },
+  },
+  resolve: (_: any, args: PropertyQueryArgs) => {
+    return PropertyController.routeSingle(args);
+  },
+};
+
+export const properties: GraphQLFieldConfig<any, any> = {
+  type: new GraphQLList(PropertyType),
+  args: {
     organization_id: {
       type: GraphQLInt,
       description: "search by the organization's id",
     },
   },
   resolve: (_: any, args: PropertyQueryArgs) => {
-    return PropertyController.routeQuery(args);
+    return PropertyController.routeMulti(args);
   },
 };

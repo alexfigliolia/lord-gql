@@ -3,15 +3,18 @@ import type { IssueQueryArgs } from "./types";
 import { GraphQLError } from "graphql";
 
 export class IssueController {
-  public static routeQuery({
-    unit_id,
-    id,
-    organization_id,
-    assigned_id,
-  }: IssueQueryArgs) {
+  public static routeSingle({ id }: IssueQueryArgs) {
     if (typeof id === "number") {
       return this.queryByID(id);
     }
+    throw new GraphQLError("Issues must be queried by ID");
+  }
+
+  public static routeMulti({
+    unit_id,
+    assigned_id,
+    organization_id,
+  }: IssueQueryArgs) {
     if (typeof unit_id === "number") {
       return this.queryByUnitID(unit_id);
     }

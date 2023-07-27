@@ -4,6 +4,7 @@ import {
   GraphQLString,
   GraphQLNonNull,
   GraphQLObjectType,
+  GraphQLList,
 } from "graphql";
 import { IssueController } from "./IssueController";
 import type { IssueQueryArgs } from "./types";
@@ -61,6 +62,19 @@ export const issue: GraphQLFieldConfig<any, any> = {
       type: GraphQLInt,
       description: "primary key",
     },
+  },
+  resolve: (_: any, args: IssueQueryArgs) => {
+    return IssueController.routeSingle(args);
+  },
+};
+
+export const issues: GraphQLFieldConfig<any, any> = {
+  type: new GraphQLList(IssueType),
+  args: {
+    id: {
+      type: GraphQLInt,
+      description: "primary key",
+    },
     unit_id: {
       type: GraphQLInt,
       description: "search by the unit's id",
@@ -75,6 +89,6 @@ export const issue: GraphQLFieldConfig<any, any> = {
     },
   },
   resolve: (_: any, args: IssueQueryArgs) => {
-    return IssueController.routeQuery(args);
+    return IssueController.routeMulti(args);
   },
 };
