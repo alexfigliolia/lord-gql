@@ -12,7 +12,7 @@ export const UserType = new GraphQLObjectType({
   name: "user",
   fields: {
     id: {
-      type: GraphQLInt,
+      type: new GraphQLNonNull(GraphQLInt),
       resolve: (user) => user.id,
     },
     email: {

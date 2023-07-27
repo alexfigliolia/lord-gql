@@ -1,4 +1,4 @@
-export type UserRoles = "owner" | "employee" | "tenant";
+export type UserRoles = "owner" | "employee" | "resident";
 
 export interface LoginArgs {
   email: string;

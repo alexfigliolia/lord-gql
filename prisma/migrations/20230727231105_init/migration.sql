@@ -1,9 +1,3 @@
-/*
-  Warnings:
-
-  - You are about to drop the `User` table. If the table is not empty, all the data it contains will be lost.
-
-*/
 -- CreateEnum
 CREATE TYPE "IssueType" AS ENUM ('complaint', 'fix', 'consultation');
 
@@ -11,39 +5,27 @@ CREATE TYPE "IssueType" AS ENUM ('complaint', 'fix', 'consultation');
 CREATE TYPE "IssueStatus" AS ENUM ('complete', 'open', 'inprogress');
 
 -- CreateEnum
-CREATE TYPE "AuthorType" AS ENUM ('owner', 'employee', 'tenant');
-
--- DropTable
-DROP TABLE "User";
+CREATE TYPE "AuthorType" AS ENUM ('owner', 'employee', 'resident');
 
 -- CreateTable
-CREATE TABLE "Owner" (
+CREATE TABLE "User" (
     "id" SERIAL NOT NULL,
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
     "name" TEXT NOT NULL,
+    "role" "AuthorType" NOT NULL,
 
-    CONSTRAINT "Owner_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "Tenant" (
-    "id" SERIAL NOT NULL,
-    "email" TEXT NOT NULL,
-    "password" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
-
-    CONSTRAINT "Tenant_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "CreditCard" (
     "id" SERIAL NOT NULL,
-    "tenant_id" INTEGER NOT NULL,
     "number" TEXT NOT NULL,
     "expiration" TEXT NOT NULL,
     "cvv" TEXT NOT NULL,
     "validated" BOOLEAN NOT NULL,
+    "user_id" INTEGER NOT NULL,
 
     CONSTRAINT "CreditCard_pkey" PRIMARY KEY ("id")
 );
@@ -51,23 +33,12 @@ CREATE TABLE "CreditCard" (
 -- CreateTable
 CREATE TABLE "LinkedBankAccounts" (
     "id" SERIAL NOT NULL,
-    "tenant_id" INTEGER NOT NULL,
+    "user_id" INTEGER NOT NULL,
     "routing" TEXT NOT NULL,
     "account_number" TEXT NOT NULL,
     "validated" BOOLEAN NOT NULL,
 
     CONSTRAINT "LinkedBankAccounts_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "Employee" (
-    "id" SERIAL NOT NULL,
-    "email" TEXT NOT NULL,
-    "password" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
-    "organization_id" INTEGER NOT NULL,
-
-    CONSTRAINT "Employee_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -111,7 +82,6 @@ CREATE TABLE "Lease" (
     "unit_id" INTEGER NOT NULL,
     "start_date" TIMESTAMP(3) NOT NULL,
     "end_date" TIMESTAMP(3) NOT NULL,
-    "tenant_id" INTEGER NOT NULL,
     "active" BOOLEAN NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -154,14 +124,20 @@ CREATE TABLE "IssueAttatchment" (
     CONSTRAINT "IssueAttatchment_pkey" PRIMARY KEY ("id")
 );
 
--- CreateIndex
-CREATE UNIQUE INDEX "Owner_email_key" ON "Owner"("email");
+-- CreateTable
+CREATE TABLE "_OrganizationToUser" (
+    "A" INTEGER NOT NULL,
+    "B" INTEGER NOT NULL
+);
+
+-- CreateTable
+CREATE TABLE "_LeaseToUser" (
+    "A" INTEGER NOT NULL,
+    "B" INTEGER NOT NULL
+);
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Tenant_email_key" ON "Tenant"("email");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Employee_email_key" ON "Employee"("email");
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Organization_owner_id_key" ON "Organization"("owner_id");
@@ -172,17 +148,23 @@ CREATE UNIQUE INDEX "Property_organization_id_key" ON "Property"("organization_i
 -- CreateIndex
 CREATE UNIQUE INDEX "Lease_unit_id_key" ON "Lease"("unit_id");
 
--- AddForeignKey
-ALTER TABLE "CreditCard" ADD CONSTRAINT "CreditCard_tenant_id_fkey" FOREIGN KEY ("tenant_id") REFERENCES "Tenant"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+-- CreateIndex
+CREATE UNIQUE INDEX "_OrganizationToUser_AB_unique" ON "_OrganizationToUser"("A", "B");
+
+-- CreateIndex
+CREATE INDEX "_OrganizationToUser_B_index" ON "_OrganizationToUser"("B");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "_LeaseToUser_AB_unique" ON "_LeaseToUser"("A", "B");
+
+-- CreateIndex
+CREATE INDEX "_LeaseToUser_B_index" ON "_LeaseToUser"("B");
 
 -- AddForeignKey
-ALTER TABLE "LinkedBankAccounts" ADD CONSTRAINT "LinkedBankAccounts_tenant_id_fkey" FOREIGN KEY ("tenant_id") REFERENCES "Tenant"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "CreditCard" ADD CONSTRAINT "CreditCard_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Employee" ADD CONSTRAINT "Employee_organization_id_fkey" FOREIGN KEY ("organization_id") REFERENCES "Organization"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Organization" ADD CONSTRAINT "Organization_owner_id_fkey" FOREIGN KEY ("owner_id") REFERENCES "Owner"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "LinkedBankAccounts" ADD CONSTRAINT "LinkedBankAccounts_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Property" ADD CONSTRAINT "Property_organization_id_fkey" FOREIGN KEY ("organization_id") REFERENCES "Organization"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -194,13 +176,10 @@ ALTER TABLE "Unit" ADD CONSTRAINT "Unit_property_id_fkey" FOREIGN KEY ("property
 ALTER TABLE "Lease" ADD CONSTRAINT "Lease_unit_id_fkey" FOREIGN KEY ("unit_id") REFERENCES "Unit"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Lease" ADD CONSTRAINT "Lease_tenant_id_fkey" FOREIGN KEY ("tenant_id") REFERENCES "Tenant"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "RentPayment" ADD CONSTRAINT "RentPayment_lease_id_fkey" FOREIGN KEY ("lease_id") REFERENCES "Lease"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Issue" ADD CONSTRAINT "Issue_assigned_id_fkey" FOREIGN KEY ("assigned_id") REFERENCES "Employee"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Issue" ADD CONSTRAINT "Issue_assigned_id_fkey" FOREIGN KEY ("assigned_id") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Issue" ADD CONSTRAINT "Issue_organization_id_fkey" FOREIGN KEY ("organization_id") REFERENCES "Organization"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -210,3 +189,15 @@ ALTER TABLE "Issue" ADD CONSTRAINT "Issue_unit_id_fkey" FOREIGN KEY ("unit_id") 
 
 -- AddForeignKey
 ALTER TABLE "IssueAttatchment" ADD CONSTRAINT "IssueAttatchment_issue_id_fkey" FOREIGN KEY ("issue_id") REFERENCES "Issue"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_OrganizationToUser" ADD CONSTRAINT "_OrganizationToUser_A_fkey" FOREIGN KEY ("A") REFERENCES "Organization"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_OrganizationToUser" ADD CONSTRAINT "_OrganizationToUser_B_fkey" FOREIGN KEY ("B") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_LeaseToUser" ADD CONSTRAINT "_LeaseToUser_A_fkey" FOREIGN KEY ("A") REFERENCES "Lease"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_LeaseToUser" ADD CONSTRAINT "_LeaseToUser_B_fkey" FOREIGN KEY ("B") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

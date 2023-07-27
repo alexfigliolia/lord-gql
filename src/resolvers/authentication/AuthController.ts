@@ -16,7 +16,7 @@ export class AuthController {
       },
     });
     if (!user) {
-      throw new GraphQLError("There is no user with this email");
+      throw new GraphQLError("There are no users with this email");
     }
     if (await bcrypt.compare(password, user.password)) {
       return user;
