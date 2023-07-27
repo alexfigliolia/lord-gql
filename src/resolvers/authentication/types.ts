@@ -1,12 +1,15 @@
+export type UserRoles = "owner" | "employee" | "tenant";
+
 export interface LoginArgs {
   email: string;
   password: string;
 }
 
-export interface SignInArgs extends LoginArgs {
+export interface SignUpArgs extends LoginArgs {
   name: string;
+  role: UserRoles;
 }
 
-export interface User extends SignInArgs {
+export interface User extends SignUpArgs {
   id: number;
 }

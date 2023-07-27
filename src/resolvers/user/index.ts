@@ -19,6 +19,10 @@ export const UserType = new GraphQLObjectType({
       type: new GraphQLNonNull(GraphQLString),
       resolve: (user) => user.email,
     },
+    role: {
+      type: new GraphQLNonNull(GraphQLString),
+      resolve: (user) => user.role,
+    },
     password: {
       type: new GraphQLNonNull(GraphQLString),
       resolve: (user) => user.password,

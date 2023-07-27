@@ -2,9 +2,9 @@ import bcrypt from "bcrypt";
 import JWT from "jsonwebtoken";
 import { DB } from "db";
 import { GraphQLError } from "graphql";
-import type { LoginArgs, SignInArgs, User } from "./types";
 import type { CookieOptions } from "express";
 import { Environment } from "Environment";
+import type { LoginArgs, SignUpArgs, User } from "./types";
 
 export class AuthController {
   private static SALTS = 10;
@@ -24,7 +24,7 @@ export class AuthController {
     throw new GraphQLError("The password is incorrect");
   }
 
-  public static async signup({ name, email, password }: SignInArgs) {
+  public static async signup({ role, name, email, password }: SignUpArgs) {
     const user = await DB.user.findUnique({
       where: {
         email,
@@ -36,14 +36,15 @@ export class AuthController {
     return DB.user.create({
       data: {
         name,
+        role,
         email: email.toLocaleLowerCase(),
         password: await bcrypt.hash(password, this.SALTS),
       },
     });
   }
 
-  public static generateToken<T extends User>({ email, name, id }: T) {
-    return JWT.sign({ id, name, email }, Environment.TOKEN);
+  public static generateToken<T extends User>({ role, email, name, id }: T) {
+    return JWT.sign({ id, name, role, email }, Environment.TOKEN);
   }
 
   public static verifyToken(token: string) {

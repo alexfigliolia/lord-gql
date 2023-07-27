@@ -10,60 +10,44 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Owner {
-  id            Int            @id @default(autoincrement())
-  email         String         @unique
-  password      String
-  name          String
-  organizations Organization[]
-}
-
-model Tenant {
+model User {
   id                   Int                  @id @default(autoincrement())
   email                String               @unique
   password             String
   name                 String
+  role                 AuthorType
+  organizations        Organization[]
   leases               Lease[]
   credit_cards         CreditCard[]
   linked_bank_accounts LinkedBankAccounts[]
+  assignments          Issue[]
 }
 
 model CreditCard {
   id         Int     @id @default(autoincrement())
-  tenant_id  Int
-  tenant     Tenant  @relation(fields: [tenant_id], references: [id])
   number     String
   expiration String
   cvv        String
   validated  Boolean
+  user       User    @relation(fields: [user_id], references: [id])
+  user_id    Int
 }
 
 model LinkedBankAccounts {
   id             Int     @id @default(autoincrement())
-  tenant_id      Int
-  tenant         Tenant  @relation(fields: [tenant_id], references: [id])
+  user_id        Int
+  user           User    @relation(fields: [user_id], references: [id])
   routing        String
   account_number String
   validated      Boolean
 }
 
-model Employee {
-  id              Int          @id @default(autoincrement())
-  email           String       @unique
-  password        String
-  name            String
-  organization_id Int
-  organization    Organization @relation(fields: [organization_id], references: [id])
-  assignments     Issue[]
-}
-
 model Organization {
   id         Int        @id @default(autoincrement())
   owner_id   Int        @unique
-  owner      Owner      @relation(fields: [owner_id], references: [id])
-  properties Property[]
-  employees  Employee[]
+  users      User[]
   issues     Issue[]
+  properties Property[]
 }
 
 model Property {
@@ -98,8 +82,7 @@ model Lease {
   unit       Unit          @relation(fields: [unit_id], references: [id])
   start_date DateTime
   end_date   DateTime
-  tenant_id  Int
-  tenant     Tenant        @relation(fields: [tenant_id], references: [id])
+  users      User[]
   payments   RentPayment[]
   active     Boolean
   created_at DateTime      @default(now())
@@ -121,7 +104,7 @@ model Issue {
   title           String
   description     String
   assigned_id     Int?
-  assigned        Employee?          @relation(fields: [assigned_id], references: [id])
+  assigned        User?              @relation(fields: [assigned_id], references: [id])
   attachments     IssueAttatchment[]
   organization    Organization       @relation(fields: [organization_id], references: [id])
   organization_id Int

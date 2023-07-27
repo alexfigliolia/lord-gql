@@ -6,9 +6,9 @@ import {
   GraphQLString,
 } from "graphql";
 import { UserType } from "resolvers/user";
-import type { LoginArgs, SignInArgs } from "./types";
-import { AuthController } from "./AuthController";
 import type { Context } from "resolvers/types";
+import type { LoginArgs, SignUpArgs } from "./types";
+import { AuthController } from "./AuthController";
 
 const AuthenticationType = new GraphQLObjectType({
   name: "authentication",
@@ -53,8 +53,8 @@ export const signup: GraphQLFieldConfig<any, any> = {
       type: new GraphQLNonNull(GraphQLString),
     },
   },
-  resolve: async (_: any, args: SignInArgs, context: Context) => {
-    const user = await AuthController.signup(args);
+  resolve: async (_: any, args: SignUpArgs, context: Context) => {
+    const user = await AuthController.signup({ ...args, role: "owner" });
     context.res.cookie(
       "L_User",
       AuthController.generateToken(user),
@@ -70,8 +70,8 @@ export const verifyToken: GraphQLFieldConfig<any, any> = {
     try {
       const token = context.req.cookies["L_User"];
       const result = AuthController.verifyToken(token || "");
-      const { email, name, id } = result;
-      return { user: { id, name, email } };
+      const { email, name, role, id } = result;
+      return { user: { id, name, role, email } };
     } catch (error) {
       throw new GraphQLError("Authorization not found");
     }
