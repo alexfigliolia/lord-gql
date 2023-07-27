@@ -10,9 +10,148 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id       Int    @id @default(autoincrement())
-  email    String @unique
-  password String
-  name     String
+model Owner {
+  id            Int            @id @default(autoincrement())
+  email         String         @unique
+  password      String
+  name          String
+  organizations Organization[]
+}
+
+model Tenant {
+  id                   Int                  @id @default(autoincrement())
+  email                String               @unique
+  password             String
+  name                 String
+  leases               Lease[]
+  credit_cards         CreditCard[]
+  linked_bank_accounts LinkedBankAccounts[]
+}
+
+model CreditCard {
+  id         Int     @id @default(autoincrement())
+  tenant_id  Int
+  tenant     Tenant  @relation(fields: [tenant_id], references: [id])
+  number     String
+  expiration String
+  cvv        String
+  validated  Boolean
+}
+
+model LinkedBankAccounts {
+  id             Int     @id @default(autoincrement())
+  tenant_id      Int
+  tenant         Tenant  @relation(fields: [tenant_id], references: [id])
+  routing        String
+  account_number String
+  validated      Boolean
+}
+
+model Employee {
+  id              Int          @id @default(autoincrement())
+  email           String       @unique
+  password        String
+  name            String
+  organization_id Int
+  organization    Organization @relation(fields: [organization_id], references: [id])
+  assignments     Issue[]
+}
+
+model Organization {
+  id         Int        @id @default(autoincrement())
+  owner_id   Int        @unique
+  owner      Owner      @relation(fields: [owner_id], references: [id])
+  properties Property[]
+  employees  Employee[]
+  issues     Issue[]
+}
+
+model Property {
+  id              Int          @id @default(autoincrement())
+  organization_id Int          @unique
+  organization    Organization @relation(fields: [organization_id], references: [id])
+  name            String
+  description     String
+  address_1       String
+  address_2       String
+  city            String
+  state           String
+  zip_code        String
+  images          String[]
+  units           Unit[]
+}
+
+model Unit {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String   @default("")
+  leases      Lease[]
+  property    Property @relation(fields: [property_id], references: [id])
+  property_id Int
+  images      String[]
+  issues      Issue[]
+}
+
+model Lease {
+  id         Int           @id @default(autoincrement())
+  unit_id    Int           @unique
+  unit       Unit          @relation(fields: [unit_id], references: [id])
+  start_date DateTime
+  end_date   DateTime
+  tenant_id  Int
+  tenant     Tenant        @relation(fields: [tenant_id], references: [id])
+  payments   RentPayment[]
+  active     Boolean
+  created_at DateTime      @default(now())
+}
+
+model RentPayment {
+  id         Int      @id @default(autoincrement())
+  lease_id   Int
+  lease      Lease    @relation(fields: [lease_id], references: [id])
+  amount     Float
+  created_at DateTime @default(now())
+}
+
+model Issue {
+  id              Int                @id @default(autoincrement())
+  status          IssueStatus        @default(open)
+  type            IssueType
+  author          String
+  title           String
+  description     String
+  assigned_id     Int?
+  assigned        Employee?          @relation(fields: [assigned_id], references: [id])
+  attachments     IssueAttatchment[]
+  organization    Organization       @relation(fields: [organization_id], references: [id])
+  organization_id Int
+  unit            Unit?              @relation(fields: [unit_id], references: [id])
+  unit_id         Int?
+  created_at      DateTime           @default(now())
+}
+
+model IssueAttatchment {
+  id         Int      @id @default(autoincrement())
+  issue_id   Int
+  issue      Issue    @relation(fields: [issue_id], references: [id])
+  image_link String
+  created_at DateTime @default(now())
+}
+
+enum IssueType {
+  complaint
+  fix
+  consultation
+}
+
+enum IssueStatus {
+  complete
+  open
+  inprogress
+}
+
+enum AuthorType {
+  owner
+  employee
+  tenant
 }
