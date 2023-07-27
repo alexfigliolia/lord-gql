@@ -1,0 +1,33 @@
+{
+	"compilerOptions": {
+		"target": "ESNext",
+		"lib": [
+			"DOM",
+			"ESNext"
+		],
+		"module": "CommonJS",
+		"moduleResolution": "Node",
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"strict": true,
+		"skipLibCheck": true,
+		"allowJs": true,
+		"resolveJsonModule": true,
+		"allowSyntheticDefaultImports": true,
+		"noFallthroughCasesInSwitch": true,
+		"isolatedModules": true,
+		"noEmit": true,
+		"baseUrl": "./src",
+		"paths": {
+			"db/*": [
+				"db/*"
+			],
+			"resolvers/*": [
+				"resolvers/*"
+			],
+		}
+	},
+	"include": [
+		"src"
+	],
+}
