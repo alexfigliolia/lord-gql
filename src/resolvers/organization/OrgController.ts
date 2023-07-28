@@ -17,13 +17,15 @@ export class OrgController {
     throw new GraphQLError("Organizations must be queried by ID");
   }
 
-  public static queryByOwnerID(ID: number, follow = false) {
-    return DB.organization.findMany({
+  public static async queryByOwnerID(ID: number, follow = false) {
+    const result = await DB.organization.findMany({
       where: {
         owner_id: ID,
       },
       include: follow ? this.followArgs : {},
     });
+    console.log(result);
+    return result;
   }
 
   public static queryByID(ID: number, follow = false) {

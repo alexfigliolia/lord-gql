@@ -40,17 +40,16 @@ model LinkedBankAccounts {
 }
 
 model Organization {
-  id         Int       @id @default(autoincrement())
-  owner_id   Int       @unique
+  id         Int        @id @default(autoincrement())
+  owner_id   Int        @unique
   name       String
   issues     Issue[]
-  properties Property?
-  users      User[]    @relation("OrganizationToUser")
+  properties Property[]
+  users      User[]     @relation("OrganizationToUser")
 }
 
 model Property {
   id              Int          @id @default(autoincrement())
-  organization_id Int          @unique
   name            String
   description     String
   address_1       String
@@ -59,6 +58,7 @@ model Property {
   state           String
   zip_code        String
   images          String[]
+  organization_id Int
   organization    Organization @relation(fields: [organization_id], references: [id])
   units           Unit[]
 }

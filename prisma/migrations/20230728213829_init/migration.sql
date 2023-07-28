@@ -53,7 +53,6 @@ CREATE TABLE "Organization" (
 -- CreateTable
 CREATE TABLE "Property" (
     "id" SERIAL NOT NULL,
-    "organization_id" INTEGER NOT NULL,
     "name" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "address_1" TEXT NOT NULL,
@@ -62,6 +61,7 @@ CREATE TABLE "Property" (
     "state" TEXT NOT NULL,
     "zip_code" TEXT NOT NULL,
     "images" TEXT[],
+    "organization_id" INTEGER NOT NULL,
 
     CONSTRAINT "Property_pkey" PRIMARY KEY ("id")
 );
@@ -142,9 +142,6 @@ CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Organization_owner_id_key" ON "Organization"("owner_id");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Property_organization_id_key" ON "Property"("organization_id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Lease_unit_id_key" ON "Lease"("unit_id");
