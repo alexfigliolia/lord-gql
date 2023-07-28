@@ -4,7 +4,8 @@ import { DB } from "db";
 import { GraphQLError } from "graphql";
 import type { CookieOptions } from "express";
 import { Environment } from "Environment";
-import type { LoginArgs, SignUpArgs, User } from "./types";
+import type { LoginArgs, OnBoardArgs, User } from "./types";
+import { OrgController } from "resolvers/organization/OrgController";
 
 export class AuthController {
   private static SALTS = 10;
@@ -24,7 +25,12 @@ export class AuthController {
     throw new GraphQLError("The password is incorrect");
   }
 
-  public static async signup({ role, name, email, password }: SignUpArgs) {
+  public static async onboard({
+    organization,
+    name,
+    email,
+    password,
+  }: OnBoardArgs) {
     const user = await DB.user.findUnique({
       where: {
         email,
@@ -33,14 +39,16 @@ export class AuthController {
     if (user) {
       throw new GraphQLError("A user with this email address already exists");
     }
-    return DB.user.create({
+    const newAccount = await DB.user.create({
       data: {
         name,
-        role,
+        role: "owner",
         email: email.toLocaleLowerCase(),
         password: await bcrypt.hash(password, this.SALTS),
       },
     });
+    await OrgController.createOrganization(organization, newAccount.id);
+    return newAccount;
   }
 
   public static generateToken<T extends User>({ role, email, name, id }: T) {

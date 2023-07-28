@@ -45,6 +45,7 @@ CREATE TABLE "LinkedBankAccounts" (
 CREATE TABLE "Organization" (
     "id" SERIAL NOT NULL,
     "owner_id" INTEGER NOT NULL,
+    "name" TEXT NOT NULL,
 
     CONSTRAINT "Organization_pkey" PRIMARY KEY ("id")
 );

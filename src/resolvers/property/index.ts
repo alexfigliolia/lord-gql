@@ -6,6 +6,7 @@ import {
   GraphQLString,
   GraphQLList,
 } from "graphql";
+import { UnitType } from "resolvers/unit";
 import { PropertyController } from "./PropertyController";
 import type { PropertyQueryArgs } from "./types";
 
@@ -49,8 +50,12 @@ export const PropertyType = new GraphQLObjectType({
       resolve: (property) => property.zip_code,
     },
     images: {
-      type: new GraphQLNonNull(GraphQLString),
+      type: new GraphQLList(GraphQLString),
       resolve: (property) => property.images,
+    },
+    units: {
+      type: new GraphQLList(UnitType),
+      resolve: (property) => property.units,
     },
   },
 });

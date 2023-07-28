@@ -16,6 +16,10 @@ export const UserType = new GraphQLObjectType({
       type: new GraphQLNonNull(GraphQLInt),
       resolve: (user) => user.id,
     },
+    name: {
+      type: new GraphQLNonNull(GraphQLString),
+      resolve: (user) => user.name,
+    },
     email: {
       type: new GraphQLNonNull(GraphQLString),
       resolve: (user) => user.email,
@@ -27,10 +31,6 @@ export const UserType = new GraphQLObjectType({
     password: {
       type: new GraphQLNonNull(GraphQLString),
       resolve: (user) => user.password,
-    },
-    name: {
-      type: new GraphQLNonNull(GraphQLString),
-      resolve: (user) => user.name,
     },
   },
 });

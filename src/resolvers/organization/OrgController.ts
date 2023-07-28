@@ -17,14 +17,13 @@ export class OrgController {
     throw new GraphQLError("Organizations must be queried by ID");
   }
 
-  public static async queryByOwnerID(ID: number, follow = false) {
-    const many = await DB.organization.findMany({
+  public static queryByOwnerID(ID: number, follow = false) {
+    return DB.organization.findMany({
       where: {
         owner_id: ID,
       },
       include: follow ? this.followArgs : {},
     });
-    return many;
   }
 
   public static queryByID(ID: number, follow = false) {
@@ -33,6 +32,15 @@ export class OrgController {
         id: ID,
       },
       include: follow ? this.followArgs : {},
+    });
+  }
+
+  public static createOrganization(name: string, owner: number) {
+    return DB.organization.create({
+      data: {
+        name: name,
+        owner_id: owner,
+      },
     });
   }
 

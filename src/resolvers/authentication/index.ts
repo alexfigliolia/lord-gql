@@ -1,5 +1,6 @@
 import type { GraphQLFieldConfig } from "graphql";
 import {
+  GraphQLBoolean,
   GraphQLError,
   GraphQLNonNull,
   GraphQLObjectType,
@@ -7,7 +8,7 @@ import {
 } from "graphql";
 import { UserType } from "resolvers/user";
 import type { Context } from "resolvers/types";
-import type { LoginArgs, SignUpArgs } from "./types";
+import type { LoginArgs, OnBoardArgs } from "./types";
 import { AuthController } from "./AuthController";
 
 const AuthenticationType = new GraphQLObjectType({
@@ -40,7 +41,7 @@ export const login: GraphQLFieldConfig<any, any> = {
   },
 };
 
-export const signup: GraphQLFieldConfig<any, any> = {
+export const onboard: GraphQLFieldConfig<any, any> = {
   type: AuthenticationType,
   args: {
     name: {
@@ -52,9 +53,12 @@ export const signup: GraphQLFieldConfig<any, any> = {
     password: {
       type: new GraphQLNonNull(GraphQLString),
     },
+    organization: {
+      type: new GraphQLNonNull(GraphQLString),
+    },
   },
-  resolve: async (_: any, args: SignUpArgs, context: Context) => {
-    const user = await AuthController.signup({ ...args, role: "owner" });
+  resolve: async (_: any, args: OnBoardArgs, context: Context) => {
+    const user = await AuthController.onboard(args);
     context.res.cookie(
       "L_User",
       AuthController.generateToken(user),
@@ -72,6 +76,18 @@ export const verifyToken: GraphQLFieldConfig<any, any> = {
       const result = AuthController.verifyToken(token || "");
       const { email, name, role, id } = result;
       return { user: { id, name, role, email } };
+    } catch (error) {
+      throw new GraphQLError("Authorization not found");
+    }
+  },
+};
+
+export const logout: GraphQLFieldConfig<any, any> = {
+  type: GraphQLBoolean,
+  resolve: (_1: any, _2: any, context: Context) => {
+    try {
+      context.res.clearCookie("L_User", AuthController.cookieOptions);
+      return true;
     } catch (error) {
       throw new GraphQLError("Authorization not found");
     }

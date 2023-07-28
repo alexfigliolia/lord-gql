@@ -5,6 +5,7 @@ import {
   GraphQLObjectType,
   GraphQLBoolean,
   GraphQLList,
+  GraphQLString,
 } from "graphql";
 import { OrgController } from "./OrgController";
 import type { OrgQueryArgs } from "./types";
@@ -19,20 +20,24 @@ export const OrganizationType = new GraphQLObjectType({
       type: new GraphQLNonNull(GraphQLInt),
       resolve: (org) => org.id,
     },
+    name: {
+      type: GraphQLString,
+      resolve: (org) => org.name,
+    },
     owner_id: {
       type: new GraphQLNonNull(GraphQLInt),
       resolve: (org) => org.owner_id,
     },
     users: {
-      type: UserType,
+      type: new GraphQLList(UserType),
       resolve: (org) => org.users,
     },
     issues: {
-      type: IssueType,
+      type: new GraphQLList(IssueType),
       resolve: (org) => org.issues,
     },
     properties: {
-      type: PropertyType,
+      type: new GraphQLList(PropertyType),
       resolve: (org) => org.properties,
     },
   },

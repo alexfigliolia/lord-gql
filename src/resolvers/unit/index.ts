@@ -4,32 +4,43 @@ import {
   GraphQLInt,
   GraphQLObjectType,
   GraphQLString,
+  GraphQLList,
 } from "graphql";
 import { UnitController } from "./UnitController";
 import type { UnitQueryArgs } from "./types";
+import { IssueType } from "resolvers/issue";
+import { LeaseType } from "resolvers/lease";
 
 export const UnitType = new GraphQLObjectType({
   name: "unit",
   fields: {
     id: {
       type: new GraphQLNonNull(GraphQLInt),
-      resolve: (property) => property.id,
+      resolve: (unit) => unit.id,
     },
     name: {
       type: new GraphQLNonNull(GraphQLString),
-      resolve: (property) => property.name,
+      resolve: (unit) => unit.name,
     },
     description: {
       type: new GraphQLNonNull(GraphQLString),
-      resolve: (property) => property.description,
+      resolve: (unit) => unit.description,
     },
     property_id: {
       type: new GraphQLNonNull(GraphQLInt),
-      resolve: (property) => property.property_id,
+      resolve: (unit) => unit.property_id,
     },
     images: {
-      type: new GraphQLNonNull(GraphQLString),
-      resolve: (property) => property.images,
+      type: new GraphQLList(GraphQLString),
+      resolve: (unit) => unit.images,
+    },
+    leases: {
+      type: new GraphQLList(LeaseType),
+      resolve: (unit) => unit.leases,
+    },
+    issues: {
+      type: new GraphQLList(IssueType),
+      resolve: (unit) => unit.issues,
     },
   },
 });

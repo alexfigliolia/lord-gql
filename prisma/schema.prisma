@@ -45,6 +45,7 @@ model LinkedBankAccounts {
 model Organization {
   id         Int        @id @default(autoincrement())
   owner_id   Int        @unique
+  name       String
   users      User[]
   issues     Issue[]
   properties Property[]

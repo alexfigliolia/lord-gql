@@ -7,9 +7,13 @@ export interface LoginArgs {
 
 export interface SignUpArgs extends LoginArgs {
   name: string;
-  role: UserRoles;
 }
 
 export interface User extends SignUpArgs {
   id: number;
+  role: UserRoles;
+}
+
+export interface OnBoardArgs extends SignUpArgs {
+  organization: string;
 }
