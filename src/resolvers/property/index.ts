@@ -55,7 +55,7 @@ export const PropertyType = new GraphQLObjectType({
       resolve: (property) => property.images,
     },
     units: {
-      type: new GraphQLList(UnitType),
+      type: new GraphQLNonNull(new GraphQLList(UnitType)),
       resolve: (property) => property.units,
     },
   },

@@ -31,15 +31,15 @@ export const UnitType = new GraphQLObjectType({
       resolve: (unit) => unit.property_id,
     },
     images: {
-      type: new GraphQLList(GraphQLString),
+      type: new GraphQLNonNull(new GraphQLList(GraphQLString)),
       resolve: (unit) => unit.images,
     },
     leases: {
-      type: new GraphQLList(LeaseType),
+      type: new GraphQLNonNull(new GraphQLList(LeaseType)),
       resolve: (unit) => unit.leases,
     },
     issues: {
-      type: new GraphQLList(IssueType),
+      type: new GraphQLNonNull(new GraphQLList(IssueType)),
       resolve: (unit) => unit.issues,
     },
   },

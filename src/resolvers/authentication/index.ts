@@ -15,7 +15,7 @@ const AuthenticationType = new GraphQLObjectType({
   name: "authentication",
   fields: {
     user: {
-      type: UserType,
+      type: new GraphQLNonNull(UserType),
     },
   },
 });

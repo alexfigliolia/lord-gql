@@ -21,7 +21,7 @@ export const OrganizationType = new GraphQLObjectType({
       resolve: (org) => org.id,
     },
     name: {
-      type: GraphQLString,
+      type: new GraphQLNonNull(GraphQLString),
       resolve: (org) => org.name,
     },
     owner_id: {
@@ -29,15 +29,15 @@ export const OrganizationType = new GraphQLObjectType({
       resolve: (org) => org.owner_id,
     },
     users: {
-      type: new GraphQLList(UserType),
+      type: new GraphQLNonNull(new GraphQLList(UserType)),
       resolve: (org) => org.users,
     },
     issues: {
-      type: new GraphQLList(IssueType),
+      type: new GraphQLNonNull(new GraphQLList(IssueType)),
       resolve: (org) => org.issues,
     },
     properties: {
-      type: new GraphQLList(PropertyType),
+      type: new GraphQLNonNull(new GraphQLList(PropertyType)),
       resolve: (org) => org.properties,
     },
   },
