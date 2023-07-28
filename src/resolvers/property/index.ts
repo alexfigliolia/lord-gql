@@ -8,7 +8,8 @@ import {
 } from "graphql";
 import { UnitType } from "resolvers/unit";
 import { PropertyController } from "./PropertyController";
-import type { PropertyQueryArgs } from "./types";
+import type { ICreateProperty, PropertyQueryArgs } from "./types";
+import type { Context } from "resolvers/types";
 
 export const PropertyType = new GraphQLObjectType({
   name: "property",
@@ -73,7 +74,7 @@ export const property: GraphQLFieldConfig<any, any> = {
   },
 };
 
-export const properties: GraphQLFieldConfig<any, any> = {
+export const properties: GraphQLFieldConfig<any, Context, PropertyQueryArgs> = {
   type: new GraphQLList(PropertyType),
   args: {
     organization_id: {
@@ -81,7 +82,41 @@ export const properties: GraphQLFieldConfig<any, any> = {
       description: "search by the organization's id",
     },
   },
-  resolve: (_: any, args: PropertyQueryArgs) => {
+  resolve: (_, args) => {
     return PropertyController.routeMulti(args);
   },
 };
+
+export const createProperty: GraphQLFieldConfig<any, Context, ICreateProperty> =
+  {
+    type: PropertyType,
+    args: {
+      organization_id: {
+        type: new GraphQLNonNull(GraphQLInt),
+      },
+      name: {
+        type: new GraphQLNonNull(GraphQLString),
+      },
+      description: {
+        type: new GraphQLNonNull(GraphQLString),
+      },
+      address_1: {
+        type: new GraphQLNonNull(GraphQLString),
+      },
+      address_2: {
+        type: new GraphQLNonNull(GraphQLString),
+      },
+      city: {
+        type: new GraphQLNonNull(GraphQLString),
+      },
+      state: {
+        type: new GraphQLNonNull(GraphQLString),
+      },
+      zip_code: {
+        type: new GraphQLNonNull(GraphQLString),
+      },
+    },
+    resolve: (_, args) => {
+      return PropertyController.createProperty(args);
+    },
+  };

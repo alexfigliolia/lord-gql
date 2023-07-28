@@ -1,5 +1,5 @@
 import { DB } from "db/Client";
-import type { PropertyQueryArgs } from "./types";
+import type { ICreateProperty, PropertyQueryArgs } from "./types";
 import { GraphQLError } from "graphql";
 
 export class PropertyController {
@@ -30,6 +30,12 @@ export class PropertyController {
       where: {
         id: ID,
       },
+    });
+  }
+
+  public static createProperty(args: ICreateProperty) {
+    return DB.property.create({
+      data: args,
     });
   }
 }
