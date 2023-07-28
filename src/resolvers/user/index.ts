@@ -1,35 +1,35 @@
 import type { GraphQLFieldConfig } from "graphql";
 import {
-  GraphQLNonNull,
-  GraphQLString,
   GraphQLInt,
-  GraphQLObjectType,
   GraphQLList,
+  GraphQLString,
+  GraphQLObjectType,
 } from "graphql";
 import { UserController } from "./UserController";
 import type { UserArgs } from "./types";
+import { Schema } from "modules/Schema";
 
 export const UserType = new GraphQLObjectType({
   name: "user",
   fields: {
     id: {
-      type: new GraphQLNonNull(GraphQLInt),
+      type: Schema.nonNull(GraphQLInt),
       resolve: (user) => user.id,
     },
     name: {
-      type: new GraphQLNonNull(GraphQLString),
+      type: Schema.nonNull(GraphQLString),
       resolve: (user) => user.name,
     },
     email: {
-      type: new GraphQLNonNull(GraphQLString),
+      type: Schema.nonNull(GraphQLString),
       resolve: (user) => user.email,
     },
     role: {
-      type: new GraphQLNonNull(GraphQLString),
+      type: Schema.nonNull(GraphQLString),
       resolve: (user) => user.role,
     },
     password: {
-      type: new GraphQLNonNull(GraphQLString),
+      type: Schema.nonNull(GraphQLString),
       resolve: (user) => user.password,
     },
   },

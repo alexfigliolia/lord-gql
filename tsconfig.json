@@ -25,6 +25,9 @@
 			"resolvers/*": [
 				"resolvers/*"
 			],
+			"modules/*": [
+				"modules/*"
+			],
 		}
 	},
 	"include": [

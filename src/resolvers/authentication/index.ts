@@ -2,7 +2,6 @@ import type { GraphQLFieldConfig } from "graphql";
 import {
   GraphQLBoolean,
   GraphQLError,
-  GraphQLNonNull,
   GraphQLObjectType,
   GraphQLString,
 } from "graphql";
@@ -10,12 +9,13 @@ import { UserType } from "resolvers/user";
 import type { Context } from "resolvers/types";
 import type { LoginArgs, OnBoardArgs } from "./types";
 import { AuthController } from "./AuthController";
+import { Schema } from "modules/Schema";
 
 const AuthenticationType = new GraphQLObjectType({
   name: "authentication",
   fields: {
     user: {
-      type: new GraphQLNonNull(UserType),
+      type: Schema.nonNull(UserType),
     },
   },
 });
@@ -24,10 +24,10 @@ export const login: GraphQLFieldConfig<any, any> = {
   type: AuthenticationType,
   args: {
     email: {
-      type: new GraphQLNonNull(GraphQLString),
+      type: Schema.nonNull(GraphQLString),
     },
     password: {
-      type: new GraphQLNonNull(GraphQLString),
+      type: Schema.nonNull(GraphQLString),
     },
   },
   resolve: async (_: any, args: LoginArgs, context: Context) => {
@@ -45,16 +45,16 @@ export const onboard: GraphQLFieldConfig<any, any> = {
   type: AuthenticationType,
   args: {
     name: {
-      type: new GraphQLNonNull(GraphQLString),
+      type: Schema.nonNull(GraphQLString),
     },
     email: {
-      type: new GraphQLNonNull(GraphQLString),
+      type: Schema.nonNull(GraphQLString),
     },
     password: {
-      type: new GraphQLNonNull(GraphQLString),
+      type: Schema.nonNull(GraphQLString),
     },
     organization: {
-      type: new GraphQLNonNull(GraphQLString),
+      type: Schema.nonNull(GraphQLString),
     },
   },
   resolve: async (_: any, args: OnBoardArgs, context: Context) => {

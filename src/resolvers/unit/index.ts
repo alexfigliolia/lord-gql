@@ -1,45 +1,40 @@
 import type { GraphQLFieldConfig } from "graphql";
-import {
-  GraphQLNonNull,
-  GraphQLInt,
-  GraphQLObjectType,
-  GraphQLString,
-  GraphQLList,
-} from "graphql";
+import { GraphQLInt, GraphQLString, GraphQLObjectType } from "graphql";
 import { UnitController } from "./UnitController";
 import type { UnitQueryArgs } from "./types";
 import { IssueType } from "resolvers/issue";
 import { LeaseType } from "resolvers/lease";
+import { Schema } from "modules/Schema";
 
 export const UnitType = new GraphQLObjectType({
   name: "unit",
   fields: {
     id: {
-      type: new GraphQLNonNull(GraphQLInt),
+      type: Schema.nonNull(GraphQLInt),
       resolve: (unit) => unit.id,
     },
     name: {
-      type: new GraphQLNonNull(GraphQLString),
+      type: Schema.nonNull(GraphQLString),
       resolve: (unit) => unit.name,
     },
     description: {
-      type: new GraphQLNonNull(GraphQLString),
+      type: Schema.nonNull(GraphQLString),
       resolve: (unit) => unit.description,
     },
     property_id: {
-      type: new GraphQLNonNull(GraphQLInt),
+      type: Schema.nonNull(GraphQLInt),
       resolve: (unit) => unit.property_id,
     },
     images: {
-      type: new GraphQLNonNull(new GraphQLList(GraphQLString)),
+      type: Schema.nonNullArray(GraphQLString),
       resolve: (unit) => unit.images,
     },
     leases: {
-      type: new GraphQLNonNull(new GraphQLList(LeaseType)),
+      type: Schema.nonNullArray(LeaseType),
       resolve: (unit) => unit.leases,
     },
     issues: {
-      type: new GraphQLNonNull(new GraphQLList(IssueType)),
+      type: Schema.nonNullArray(IssueType),
       resolve: (unit) => unit.issues,
     },
   },

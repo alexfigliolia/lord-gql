@@ -2,38 +2,38 @@ import type { GraphQLFieldConfig } from "graphql";
 import {
   GraphQLInt,
   GraphQLString,
-  GraphQLNonNull,
   GraphQLObjectType,
   GraphQLList,
 } from "graphql";
 import { IssueController } from "./IssueController";
 import type { IssueQueryArgs } from "./types";
+import { Schema } from "modules/Schema";
 
 export const IssueType = new GraphQLObjectType({
   name: "issue",
   fields: {
     id: {
-      type: new GraphQLNonNull(GraphQLInt),
+      type: Schema.nonNull(GraphQLInt),
       resolve: (issue) => issue.id,
     },
     status: {
-      type: new GraphQLNonNull(GraphQLString),
+      type: Schema.nonNull(GraphQLString),
       resolve: (issue) => issue.status,
     },
     type: {
-      type: new GraphQLNonNull(GraphQLString),
+      type: Schema.nonNull(GraphQLString),
       resolve: (issue) => issue.type,
     },
     author: {
-      type: new GraphQLNonNull(GraphQLString),
+      type: Schema.nonNull(GraphQLString),
       resolve: (issue) => issue.author,
     },
     title: {
-      type: new GraphQLNonNull(GraphQLString),
+      type: Schema.nonNull(GraphQLString),
       resolve: (issue) => issue.title,
     },
     description: {
-      type: new GraphQLNonNull(GraphQLString),
+      type: Schema.nonNull(GraphQLString),
       resolve: (issue) => issue.description,
     },
     assigned_id: {
@@ -41,7 +41,7 @@ export const IssueType = new GraphQLObjectType({
       resolve: (issue) => issue.assigned_id,
     },
     organization_id: {
-      type: new GraphQLNonNull(GraphQLInt),
+      type: Schema.nonNull(GraphQLInt),
       resolve: (issue) => issue.organization_id,
     },
     unit_id: {
@@ -49,7 +49,7 @@ export const IssueType = new GraphQLObjectType({
       resolve: (issue) => issue.unit_id,
     },
     created_at: {
-      type: new GraphQLNonNull(GraphQLString),
+      type: Schema.nonNull(GraphQLString),
       resolve: (issue) => issue.created_at,
     },
   },

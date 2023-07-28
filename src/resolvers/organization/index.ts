@@ -1,6 +1,5 @@
 import type { GraphQLFieldConfig } from "graphql";
 import {
-  GraphQLNonNull,
   GraphQLInt,
   GraphQLObjectType,
   GraphQLBoolean,
@@ -12,32 +11,33 @@ import type { OrgQueryArgs } from "./types";
 import { UserType } from "resolvers/user";
 import { IssueType } from "resolvers/issue";
 import { PropertyType } from "resolvers/property";
+import { Schema } from "modules/Schema";
 
 export const OrganizationType = new GraphQLObjectType({
   name: "organization",
   fields: {
     id: {
-      type: new GraphQLNonNull(GraphQLInt),
+      type: Schema.nonNull(GraphQLInt),
       resolve: (org) => org.id,
     },
     name: {
-      type: new GraphQLNonNull(GraphQLString),
+      type: Schema.nonNull(GraphQLString),
       resolve: (org) => org.name,
     },
     owner_id: {
-      type: new GraphQLNonNull(GraphQLInt),
+      type: Schema.nonNull(GraphQLInt),
       resolve: (org) => org.owner_id,
     },
     users: {
-      type: new GraphQLNonNull(new GraphQLList(UserType)),
+      type: Schema.nonNullArray(UserType),
       resolve: (org) => org.users,
     },
     issues: {
-      type: new GraphQLNonNull(new GraphQLList(IssueType)),
+      type: Schema.nonNullArray(IssueType),
       resolve: (org) => org.issues,
     },
     properties: {
-      type: new GraphQLNonNull(new GraphQLList(PropertyType)),
+      type: Schema.nonNullArray(PropertyType),
       resolve: (org) => org.properties,
     },
   },
@@ -47,7 +47,7 @@ export const organization: GraphQLFieldConfig<any, any> = {
   type: OrganizationType,
   args: {
     id: {
-      type: GraphQLInt,
+      type: Schema.nonNull(GraphQLInt),
       description: "primary key",
     },
     follow_all: {
@@ -64,7 +64,7 @@ export const organizations: GraphQLFieldConfig<any, any> = {
   type: new GraphQLList(OrganizationType),
   args: {
     owner_id: {
-      type: GraphQLInt,
+      type: Schema.nonNull(GraphQLInt),
       description: "search by the owner's id",
     },
     follow_all: {

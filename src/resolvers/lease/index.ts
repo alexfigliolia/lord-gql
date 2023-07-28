@@ -1,6 +1,5 @@
 import type { GraphQLFieldConfig } from "graphql";
 import {
-  GraphQLNonNull,
   GraphQLInt,
   GraphQLObjectType,
   GraphQLString,
@@ -9,32 +8,33 @@ import {
 } from "graphql";
 import { LeaseController } from "./LeaseController";
 import type { LeaseQueryArgs } from "./types";
+import { Schema } from "modules/Schema";
 
 export const LeaseType = new GraphQLObjectType({
   name: "lease",
   fields: {
     id: {
-      type: new GraphQLNonNull(GraphQLInt),
+      type: Schema.nonNull(GraphQLInt),
       resolve: (lease) => lease.id,
     },
     unit_id: {
-      type: new GraphQLNonNull(GraphQLInt),
+      type: Schema.nonNull(GraphQLInt),
       resolve: (lease) => lease.unit_id,
     },
     start_date: {
-      type: new GraphQLNonNull(GraphQLString),
+      type: Schema.nonNull(GraphQLString),
       resolve: (lease) => lease.start_date,
     },
     end_date: {
-      type: new GraphQLNonNull(GraphQLString),
+      type: Schema.nonNull(GraphQLString),
       resolve: (lease) => lease.end_date,
     },
     active: {
-      type: new GraphQLNonNull(GraphQLBoolean),
+      type: Schema.nonNull(GraphQLBoolean),
       resolve: (lease) => lease.active,
     },
     created_at: {
-      type: new GraphQLNonNull(GraphQLString),
+      type: Schema.nonNull(GraphQLString),
       resolve: (lease) => lease.created_at,
     },
   },
