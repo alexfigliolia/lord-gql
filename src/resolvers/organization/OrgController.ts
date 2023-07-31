@@ -24,7 +24,19 @@ export class OrgController {
       },
       include: {
         users: true,
-        issues: true,
+        issues: {
+          orderBy: {
+            created_at: "desc",
+          },
+          include: {
+            assigned: {
+              select: {
+                name: true,
+                id: true,
+              },
+            },
+          },
+        },
         properties: true,
       },
     });

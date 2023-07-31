@@ -4,7 +4,13 @@ import { login, logout, onboard, verifyToken } from "./authentication";
 import { organization, organizations } from "./organization";
 import { property, properties, createProperty } from "./property";
 import { lease, leases } from "./lease";
-import { issue, issues, createIssue } from "./issue";
+import {
+  issue,
+  issues,
+  createIssue,
+  setIssueStatus,
+  setIssueAssignment,
+} from "./issue";
 import { issueAttachment, issueAttachments } from "./issue-attachments";
 import { payment, payments } from "./payments";
 
@@ -37,6 +43,8 @@ const MutationRoot = new GraphQLObjectType({
     onboard,
     createProperty,
     createIssue,
+    setIssueStatus,
+    setIssueAssignment,
   }),
 });
 

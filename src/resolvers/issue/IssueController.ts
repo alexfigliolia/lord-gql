@@ -1,5 +1,10 @@
 import { DB } from "db/Client";
-import type { ICreateIssue, IssueQueryArgs } from "./types";
+import type {
+  IAssignIssue,
+  ICreateIssue,
+  IIssueStatus,
+  IssueQueryArgs,
+} from "./types";
 import { GraphQLError } from "graphql";
 
 export class IssueController {
@@ -62,6 +67,32 @@ export class IssueController {
   public static create(args: ICreateIssue) {
     return DB.issue.create({
       data: args,
+    });
+  }
+
+  public static setStatus({ id, status }: IIssueStatus) {
+    return DB.issue.update({
+      data: {
+        status: {
+          set: status,
+        },
+      },
+      where: {
+        id,
+      },
+    });
+  }
+
+  public static setAssignment({ user_id, issue_id }: IAssignIssue) {
+    return DB.issue.update({
+      data: {
+        assigned_id: {
+          set: user_id,
+        },
+      },
+      where: {
+        id: issue_id,
+      },
     });
   }
 }

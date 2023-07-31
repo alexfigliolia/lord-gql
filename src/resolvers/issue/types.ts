@@ -17,6 +17,16 @@ export interface ICreateIssue {
   type: IssueType;
 }
 
+export interface IIssueStatus {
+  id: number;
+  status: IssueStatus;
+}
+
+export interface IAssignIssue {
+  user_id: number;
+  issue_id: number;
+}
+
 enum IssueType {
   complaint = "complaint",
   fix = "fix",

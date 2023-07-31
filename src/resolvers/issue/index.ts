@@ -6,7 +6,12 @@ import {
   GraphQLEnumType,
 } from "graphql";
 import { IssueController } from "./IssueController";
-import type { ICreateIssue, IssueQueryArgs } from "./types";
+import type {
+  IAssignIssue,
+  ICreateIssue,
+  IIssueStatus,
+  IssueQueryArgs,
+} from "./types";
 import { Schema } from "modules/Schema";
 import { UserType } from "resolvers/user";
 import { IssueAttachmentType } from "resolvers/issue-attachments";
@@ -180,5 +185,43 @@ export const createIssue: GraphQLFieldConfig<any, Context, ICreateIssue> = {
   },
   resolve: (_: any, args) => {
     return IssueController.create(args);
+  },
+};
+
+export const setIssueStatus: GraphQLFieldConfig<any, Context, IIssueStatus> = {
+  type: Schema.nonNull(IssueType),
+  args: {
+    id: {
+      type: Schema.nonNull(GraphQLInt),
+      description: "The issue's primary key",
+    },
+    status: {
+      type: Schema.nonNull(IssueStatus),
+      description: "The new status of the issue",
+    },
+  },
+  resolve: (_: any, args) => {
+    return IssueController.setStatus(args);
+  },
+};
+
+export const setIssueAssignment: GraphQLFieldConfig<
+  any,
+  Context,
+  IAssignIssue
+> = {
+  type: Schema.nonNull(IssueType),
+  args: {
+    issue_id: {
+      type: Schema.nonNull(GraphQLInt),
+      description: "The issue's ID",
+    },
+    user_id: {
+      type: GraphQLInt,
+      description: "The user's ID",
+    },
+  },
+  resolve: (_: any, args) => {
+    return IssueController.setAssignment(args);
   },
 };
