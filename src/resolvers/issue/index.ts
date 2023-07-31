@@ -3,11 +3,44 @@ import {
   GraphQLInt,
   GraphQLString,
   GraphQLObjectType,
-  GraphQLList,
+  GraphQLEnumType,
 } from "graphql";
 import { IssueController } from "./IssueController";
-import type { IssueQueryArgs } from "./types";
+import type { ICreateIssue, IssueQueryArgs } from "./types";
 import { Schema } from "modules/Schema";
+import { UserType } from "resolvers/user";
+import { IssueAttachmentType } from "resolvers/issue-attachments";
+import type { Context } from "resolvers/types";
+
+export const IssueClassification = new GraphQLEnumType({
+  name: "IssueType",
+  values: {
+    complaint: {
+      value: "complaint",
+    },
+    fix: {
+      value: "fix",
+    },
+    consultation: {
+      value: "consultation",
+    },
+  },
+});
+
+export const IssueStatus = new GraphQLEnumType({
+  name: "IssueStatus",
+  values: {
+    complete: {
+      value: "complete",
+    },
+    open: {
+      value: "open",
+    },
+    inprogress: {
+      value: "inprogress",
+    },
+  },
+});
 
 export const IssueType = new GraphQLObjectType({
   name: "issue",
@@ -17,11 +50,11 @@ export const IssueType = new GraphQLObjectType({
       resolve: (issue) => issue.id,
     },
     status: {
-      type: Schema.nonNull(GraphQLString),
+      type: Schema.nonNull(IssueStatus),
       resolve: (issue) => issue.status,
     },
     type: {
-      type: Schema.nonNull(GraphQLString),
+      type: Schema.nonNull(IssueClassification),
       resolve: (issue) => issue.type,
     },
     author: {
@@ -40,9 +73,17 @@ export const IssueType = new GraphQLObjectType({
       type: GraphQLInt,
       resolve: (issue) => issue.assigned_id,
     },
+    assigned: {
+      type: UserType,
+      resolve: (issue) => issue.assigned,
+    },
     organization_id: {
       type: Schema.nonNull(GraphQLInt),
       resolve: (issue) => issue.organization_id,
+    },
+    property_id: {
+      type: Schema.nonNull(GraphQLInt),
+      resolve: (issue) => issue.property_id,
     },
     unit_id: {
       type: GraphQLInt,
@@ -52,11 +93,15 @@ export const IssueType = new GraphQLObjectType({
       type: Schema.nonNull(GraphQLString),
       resolve: (issue) => issue.created_at,
     },
+    attachments: {
+      type: Schema.nonNullArray(IssueAttachmentType),
+      resolve: (issue) => issue.attachments,
+    },
   },
 });
 
 export const issue: GraphQLFieldConfig<any, any> = {
-  type: IssueType,
+  type: Schema.nonNull(IssueType),
   args: {
     id: {
       type: GraphQLInt,
@@ -69,7 +114,7 @@ export const issue: GraphQLFieldConfig<any, any> = {
 };
 
 export const issues: GraphQLFieldConfig<any, any> = {
-  type: new GraphQLList(IssueType),
+  type: Schema.nonNullArray(IssueType),
   args: {
     id: {
       type: GraphQLInt,
@@ -90,5 +135,50 @@ export const issues: GraphQLFieldConfig<any, any> = {
   },
   resolve: (_: any, args: IssueQueryArgs) => {
     return IssueController.routeMulti(args);
+  },
+};
+
+export const createIssue: GraphQLFieldConfig<any, Context, ICreateIssue> = {
+  type: Schema.nonNull(IssueType),
+  args: {
+    author: {
+      type: Schema.nonNull(GraphQLString),
+      description: "The creator of the issue",
+    },
+    title: {
+      type: Schema.nonNull(GraphQLString),
+      description: "A title for the issue",
+    },
+    description: {
+      type: Schema.nonNull(GraphQLString),
+      description: "A title for the issue",
+    },
+    property_id: {
+      type: Schema.nonNull(GraphQLInt),
+      description: "A property the issue relates to",
+    },
+    unit_id: {
+      type: GraphQLInt,
+      description: "An optional attachment to a unit",
+    },
+    organization_id: {
+      type: Schema.nonNull(GraphQLInt),
+      description: "the organization that the issue belongs to",
+    },
+    assigned_id: {
+      type: GraphQLInt,
+      description: "A user ID to assign the issue to",
+    },
+    status: {
+      type: IssueStatus,
+      description: "The current status of the issue",
+    },
+    type: {
+      type: Schema.nonNull(IssueClassification),
+      description: "The type of issue",
+    },
+  },
+  resolve: (_: any, args) => {
+    return IssueController.create(args);
   },
 };

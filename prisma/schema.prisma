@@ -20,6 +20,15 @@ model User {
   organizations        Organization[]       @relation("OrganizationToUser")
 }
 
+model Organization {
+  id         Int        @id @default(autoincrement())
+  owner_id   Int        @unique
+  name       String
+  issues     Issue[]
+  properties Property[]
+  users      User[]     @relation("OrganizationToUser")
+}
+
 model CreditCard {
   id         Int     @id @default(autoincrement())
   number     String
@@ -39,15 +48,6 @@ model LinkedBankAccounts {
   user           User    @relation(fields: [user_id], references: [id])
 }
 
-model Organization {
-  id         Int        @id @default(autoincrement())
-  owner_id   Int        @unique
-  name       String
-  issues     Issue[]
-  properties Property[]
-  users      User[]     @relation("OrganizationToUser")
-}
-
 model Property {
   id              Int          @id @default(autoincrement())
   name            String
@@ -59,6 +59,7 @@ model Property {
   zip_code        String
   images          String[]
   organization_id Int
+  issues          Issue[]
   organization    Organization @relation(fields: [organization_id], references: [id])
   units           Unit[]
 }
@@ -70,23 +71,23 @@ model Unit {
   property_id Int
   images      String[]
   issues      Issue[]
-  leases      Lease?
+  leases      Lease[]
   property    Property @relation(fields: [property_id], references: [id])
 }
 
 model Lease {
-  id         Int           @id @default(autoincrement())
-  unit_id    Int           @unique
+  id         Int        @id @default(autoincrement())
+  unit_id    Int
   start_date DateTime
   end_date   DateTime
   active     Boolean
-  created_at DateTime      @default(now())
-  unit       Unit          @relation(fields: [unit_id], references: [id])
-  payments   RentPayment[]
-  users      User[]        @relation("LeaseToUser")
+  created_at DateTime   @default(now())
+  unit       Unit       @relation(fields: [unit_id], references: [id])
+  payments   Payments[]
+  users      User[]     @relation("LeaseToUser")
 }
 
-model RentPayment {
+model Payments {
   id         Int      @id @default(autoincrement())
   lease_id   Int
   amount     Float
@@ -95,23 +96,25 @@ model RentPayment {
 }
 
 model Issue {
-  id              Int                @id @default(autoincrement())
-  status          IssueStatus        @default(open)
+  id              Int               @id @default(autoincrement())
+  status          IssueStatus       @default(open)
   type            IssueType
   author          String
   title           String
   description     String
   assigned_id     Int?
   organization_id Int
+  property_id     Int
   unit_id         Int?
-  created_at      DateTime           @default(now())
-  assigned        User?              @relation(fields: [assigned_id], references: [id])
-  organization    Organization       @relation(fields: [organization_id], references: [id])
-  unit            Unit?              @relation(fields: [unit_id], references: [id])
-  attachments     IssueAttatchment[]
+  created_at      DateTime          @default(now())
+  assigned        User?             @relation(fields: [assigned_id], references: [id])
+  organization    Organization      @relation(fields: [organization_id], references: [id])
+  property        Property          @relation(fields: [property_id], references: [id])
+  unit            Unit?             @relation(fields: [unit_id], references: [id])
+  attachments     IssueAttachment[]
 }
 
-model IssueAttatchment {
+model IssueAttachment {
   id         Int      @id @default(autoincrement())
   issue_id   Int
   image_link String

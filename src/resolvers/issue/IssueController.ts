@@ -1,5 +1,5 @@
 import { DB } from "db/Client";
-import type { IssueQueryArgs } from "./types";
+import type { ICreateIssue, IssueQueryArgs } from "./types";
 import { GraphQLError } from "graphql";
 
 export class IssueController {
@@ -52,10 +52,16 @@ export class IssueController {
   }
 
   public static queryByID(ID: number) {
-    return DB.lease.findUnique({
+    return DB.issue.findUnique({
       where: {
         id: ID,
       },
+    });
+  }
+
+  public static create(args: ICreateIssue) {
+    return DB.issue.create({
+      data: args,
     });
   }
 }

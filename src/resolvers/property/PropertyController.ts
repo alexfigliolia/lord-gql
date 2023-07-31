@@ -22,6 +22,9 @@ export class PropertyController {
       where: {
         organization_id: ID,
       },
+      include: {
+        units: true,
+      },
     });
   }
 
@@ -30,12 +33,18 @@ export class PropertyController {
       where: {
         id: ID,
       },
+      include: {
+        units: true,
+      },
     });
   }
 
   public static createProperty(args: ICreateProperty) {
     return DB.property.create({
       data: args,
+      include: {
+        units: true,
+      },
     });
   }
 }

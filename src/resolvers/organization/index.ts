@@ -2,7 +2,6 @@ import type { GraphQLFieldConfig } from "graphql";
 import {
   GraphQLInt,
   GraphQLObjectType,
-  GraphQLBoolean,
   GraphQLList,
   GraphQLString,
 } from "graphql";
@@ -50,10 +49,6 @@ export const organization: GraphQLFieldConfig<any, any> = {
       type: Schema.nonNull(GraphQLInt),
       description: "primary key",
     },
-    follow_all: {
-      type: GraphQLBoolean,
-      description: "follow all joins",
-    },
   },
   resolve: (_: any, args: OrgQueryArgs) => {
     return OrgController.routeSingle(args);
@@ -66,10 +61,6 @@ export const organizations: GraphQLFieldConfig<any, any> = {
     owner_id: {
       type: Schema.nonNull(GraphQLInt),
       description: "search by the owner's id",
-    },
-    follow_all: {
-      type: GraphQLBoolean,
-      description: "follow all joins",
     },
   },
   resolve: (_: any, args: OrgQueryArgs) => {

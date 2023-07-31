@@ -9,7 +9,7 @@
     "build": "rm -rf dist && tsc --project tsconfig.build.json && tsc-alias -p tsconfig.build.json",
     "lint": "tsc --noemit && eslint ./ --fix",
     "generate-types": "npx prisma introspect && npx prisma generate",
-    "create-migration": "npx prisma migrate dev --name"
+    "generate-migration": "npx prisma migrate dev --name"
   },
   "author": "",
   "license": "ISC",
