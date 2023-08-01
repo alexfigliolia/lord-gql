@@ -1,7 +1,11 @@
 import { GraphQLObjectType, GraphQLSchema } from "graphql";
 import { user, users } from "./user";
 import { login, logout, onboard, verifyToken } from "./authentication";
-import { organization, organizations } from "./organization";
+import {
+  organization,
+  organizations,
+  organizationAffiliations,
+} from "./organization";
 import { property, properties, createProperty } from "./property";
 import { lease, leases } from "./lease";
 import {
@@ -13,6 +17,7 @@ import {
 } from "./issue";
 import { issueAttachment, issueAttachments } from "./issue-attachments";
 import { payment, payments } from "./payments";
+import { invites, createInvite, acceptInvite } from "./invite";
 
 const QueryRoot = new GraphQLObjectType({
   name: "Query",
@@ -24,6 +29,7 @@ const QueryRoot = new GraphQLObjectType({
     verifyToken,
     organization,
     organizations,
+    organizationAffiliations,
     property,
     properties,
     lease,
@@ -34,6 +40,7 @@ const QueryRoot = new GraphQLObjectType({
     issues,
     issueAttachment,
     issueAttachments,
+    invites,
   }),
 });
 
@@ -45,6 +52,8 @@ const MutationRoot = new GraphQLObjectType({
     createIssue,
     setIssueStatus,
     setIssueAssignment,
+    createInvite,
+    acceptInvite,
   }),
 });
 

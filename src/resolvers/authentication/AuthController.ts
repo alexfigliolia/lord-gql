@@ -4,7 +4,7 @@ import { DB } from "db";
 import { GraphQLError } from "graphql";
 import type { CookieOptions } from "express";
 import { Environment } from "Environment";
-import type { LoginArgs, OnBoardArgs, User } from "./types";
+import type { LoginArgs, OnBoardArgs, User, UserFromInvite } from "./types";
 import { OrgController } from "resolvers/organization/OrgController";
 
 export class AuthController {
@@ -23,6 +23,20 @@ export class AuthController {
       return user;
     }
     throw new GraphQLError("The password is incorrect");
+  }
+
+  public static async createUserFromInvite(args: UserFromInvite) {
+    const { organization_id, ...userArgs } = args;
+    const user = await DB.user.create({
+      data: {
+        name: userArgs.name,
+        role: userArgs.role,
+        email: userArgs.email.toLocaleLowerCase(),
+        password: await bcrypt.hash(userArgs.password, this.SALTS),
+      },
+    });
+    await OrgController.addUser(user.id, organization_id);
+    return user;
   }
 
   public static async onboard({

@@ -6,11 +6,12 @@ import {
   GraphQLString,
 } from "graphql";
 import { OrgController } from "./OrgController";
-import type { OrgQueryArgs } from "./types";
+import type { OrgByAffiliation, OrgByID, OrgByOwner } from "./types";
 import { UserType } from "resolvers/user";
 import { IssueType } from "resolvers/issue";
 import { PropertyType } from "resolvers/property";
 import { Schema } from "modules/Schema";
+import type { Context } from "resolvers/types";
 
 export const OrganizationType = new GraphQLObjectType({
   name: "organization",
@@ -42,7 +43,7 @@ export const OrganizationType = new GraphQLObjectType({
   },
 });
 
-export const organization: GraphQLFieldConfig<any, any> = {
+export const organization: GraphQLFieldConfig<any, Context, OrgByID> = {
   type: OrganizationType,
   args: {
     id: {
@@ -50,12 +51,12 @@ export const organization: GraphQLFieldConfig<any, any> = {
       description: "primary key",
     },
   },
-  resolve: (_: any, args: OrgQueryArgs) => {
-    return OrgController.routeSingle(args);
+  resolve: (_: any, { id }) => {
+    return OrgController.queryByID(id);
   },
 };
 
-export const organizations: GraphQLFieldConfig<any, any> = {
+export const organizations: GraphQLFieldConfig<any, Context, OrgByOwner> = {
   type: new GraphQLList(OrganizationType),
   args: {
     owner_id: {
@@ -63,7 +64,24 @@ export const organizations: GraphQLFieldConfig<any, any> = {
       description: "search by the owner's id",
     },
   },
-  resolve: (_: any, args: OrgQueryArgs) => {
-    return OrgController.routeMulti(args);
+  resolve: (_: any, { owner_id }) => {
+    return OrgController.queryByOwnerID(owner_id);
+  },
+};
+
+export const organizationAffiliations: GraphQLFieldConfig<
+  any,
+  Context,
+  OrgByAffiliation
+> = {
+  type: new GraphQLList(OrganizationType),
+  args: {
+    user_id: {
+      type: Schema.nonNull(GraphQLInt),
+      description: "search by user's id",
+    },
+  },
+  resolve: (_: any, { user_id }) => {
+    return OrgController.queryByAffiliation(user_id);
   },
 };

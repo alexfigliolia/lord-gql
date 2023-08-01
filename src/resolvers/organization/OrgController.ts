@@ -1,44 +1,12 @@
 import { DB } from "db/Client";
-import type { OrgQueryArgs } from "./types";
-import { GraphQLError } from "graphql";
 
 export class OrgController {
-  public static routeSingle({ id }: OrgQueryArgs) {
-    if (typeof id === "number") {
-      return this.queryByID(id);
-    }
-    throw new GraphQLError("Organizations must be queried by ID");
-  }
-
-  public static routeMulti({ owner_id }: OrgQueryArgs) {
-    if (typeof owner_id === "number") {
-      return this.queryByOwnerID(owner_id);
-    }
-    throw new GraphQLError("Organizations must be queried by ID");
-  }
-
   public static queryByOwnerID(ID: number) {
     return DB.organization.findMany({
       where: {
         owner_id: ID,
       },
-      include: {
-        users: true,
-        issues: {
-          orderBy: {
-            created_at: "desc",
-          },
-          include: {
-            assigned: {
-              select: {
-                name: true,
-                id: true,
-              },
-            },
-          },
-        },
-        properties: true,
-      },
+      include: this.includes,
     });
   }
 
@@ -47,10 +15,20 @@ export class OrgController {
       where: {
         id: ID,
       },
-      include: {
-        issues: true,
-        properties: true,
+      include: this.includes,
+    });
+  }
+
+  public static async queryByAffiliation(user_id: number) {
+    return DB.organization.findMany({
+      where: {
+        users: {
+          some: {
+            id: user_id,
+          },
+        },
       },
+      include: this.includes,
     });
   }
 
@@ -62,5 +40,40 @@ export class OrgController {
         users: { connect: { id: owner } },
       },
     });
+  }
+
+  public static addUser(user_id: number, org_id: number) {
+    return DB.organization.update({
+      where: {
+        id: org_id,
+      },
+      data: {
+        users: {
+          connect: {
+            id: user_id,
+          },
+        },
+      },
+    });
+  }
+
+  private static get includes() {
+    return {
+      users: true,
+      issues: {
+        orderBy: {
+          created_at: "desc",
+        },
+        include: {
+          assigned: {
+            select: {
+              name: true,
+              id: true,
+            },
+          },
+        },
+      },
+      properties: true,
+    } as const;
   }
 }

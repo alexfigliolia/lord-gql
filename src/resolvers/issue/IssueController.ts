@@ -61,13 +61,17 @@ export class IssueController {
       where: {
         id: ID,
       },
+      include: {
+        assigned: true,
+      },
     });
   }
 
-  public static create(args: ICreateIssue) {
-    return DB.issue.create({
+  public static async create(args: ICreateIssue) {
+    const issue = await DB.issue.create({
       data: args,
     });
+    return this.queryByID(issue.id);
   }
 
   public static setStatus({ id, status }: IIssueStatus) {

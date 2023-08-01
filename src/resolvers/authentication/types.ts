@@ -17,3 +17,8 @@ export interface User extends SignUpArgs {
 export interface OnBoardArgs extends SignUpArgs {
   organization: string;
 }
+
+export interface UserFromInvite extends SignUpArgs {
+  role: UserRoles;
+  organization_id: number;
+}

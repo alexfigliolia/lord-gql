@@ -4,3 +4,9 @@ export interface UserArgs {
   email?: string;
   password?: string;
 }
+
+export enum UserRole {
+  owner = "owner",
+  employee = "employee",
+  resident = "resident",
+}

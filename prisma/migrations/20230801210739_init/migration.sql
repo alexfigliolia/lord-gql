@@ -5,7 +5,19 @@ CREATE TYPE "IssueType" AS ENUM ('complaint', 'fix', 'consultation');
 CREATE TYPE "IssueStatus" AS ENUM ('complete', 'open', 'inprogress');
 
 -- CreateEnum
-CREATE TYPE "AuthorType" AS ENUM ('owner', 'employee', 'resident');
+CREATE TYPE "UserRole" AS ENUM ('owner', 'employee', 'resident');
+
+-- CreateTable
+CREATE TABLE "Invite" (
+    "id" SERIAL NOT NULL,
+    "email" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "role" "UserRole" NOT NULL,
+    "organization_id" INTEGER NOT NULL,
+    "organization_name" TEXT NOT NULL,
+
+    CONSTRAINT "Invite_pkey" PRIMARY KEY ("id")
+);
 
 -- CreateTable
 CREATE TABLE "User" (
@@ -13,7 +25,7 @@ CREATE TABLE "User" (
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
     "name" TEXT NOT NULL,
-    "role" "AuthorType" NOT NULL,
+    "role" "UserRole" NOT NULL,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -181,10 +193,10 @@ ALTER TABLE "Issue" ADD CONSTRAINT "Issue_assigned_id_fkey" FOREIGN KEY ("assign
 ALTER TABLE "Issue" ADD CONSTRAINT "Issue_organization_id_fkey" FOREIGN KEY ("organization_id") REFERENCES "Organization"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Issue" ADD CONSTRAINT "Issue_unit_id_fkey" FOREIGN KEY ("unit_id") REFERENCES "Unit"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Issue" ADD CONSTRAINT "Issue_property_id_fkey" FOREIGN KEY ("property_id") REFERENCES "Property"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Issue" ADD CONSTRAINT "Issue_property_id_fkey" FOREIGN KEY ("property_id") REFERENCES "Property"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Issue" ADD CONSTRAINT "Issue_unit_id_fkey" FOREIGN KEY ("unit_id") REFERENCES "Unit"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "IssueAttachment" ADD CONSTRAINT "IssueAttachment_issue_id_fkey" FOREIGN KEY ("issue_id") REFERENCES "Issue"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
