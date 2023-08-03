@@ -10,6 +10,8 @@ import { PropertyController } from "./PropertyController";
 import type { ICreateProperty, PropertyQueryArgs } from "./types";
 import type { Context } from "resolvers/types";
 import { Schema } from "modules/Schema";
+import { IssueType } from "resolvers/issue";
+import { ExpenseType } from "resolvers/expenses";
 
 export const PropertyType = new GraphQLObjectType({
   name: "property",
@@ -58,6 +60,14 @@ export const PropertyType = new GraphQLObjectType({
       type: Schema.nonNullArray(UnitType),
       resolve: (property) => property.units,
     },
+    issues: {
+      type: Schema.nonNullArray(IssueType),
+      resolve: (property) => property.issues,
+    },
+    expenses: {
+      type: Schema.nonNullArray(ExpenseType),
+      resolve: (property) => property.expenses,
+    },
   },
 });
 
@@ -65,7 +75,7 @@ export const property: GraphQLFieldConfig<any, any> = {
   type: PropertyType,
   args: {
     id: {
-      type: GraphQLInt,
+      type: Schema.nonNull(GraphQLInt),
       description: "primary key",
     },
   },

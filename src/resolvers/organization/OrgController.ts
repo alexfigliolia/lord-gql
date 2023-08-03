@@ -19,7 +19,7 @@ export class OrgController {
     });
   }
 
-  public static async queryByAffiliation(user_id: number) {
+  public static queryByAffiliation(user_id: number) {
     return DB.organization.findMany({
       where: {
         users: {
@@ -60,20 +60,24 @@ export class OrgController {
   private static get includes() {
     return {
       users: true,
-      issues: {
-        orderBy: {
-          created_at: "desc",
-        },
-        include: {
-          assigned: {
-            select: {
-              name: true,
-              id: true,
-            },
+      issues: this.issues,
+      properties: true,
+    } as const;
+  }
+
+  private static get issues() {
+    return {
+      orderBy: {
+        created_at: "desc",
+      },
+      include: {
+        assigned: {
+          select: {
+            name: true,
+            id: true,
           },
         },
       },
-      properties: true,
     } as const;
   }
 }

@@ -7,6 +7,9 @@ CREATE TYPE "IssueStatus" AS ENUM ('complete', 'open', 'inprogress');
 -- CreateEnum
 CREATE TYPE "UserRole" AS ENUM ('owner', 'employee', 'resident');
 
+-- CreateEnum
+CREATE TYPE "ExpenseType" AS ENUM ('repair', 'hardware', 'management');
+
 -- CreateTable
 CREATE TABLE "Invite" (
     "id" SERIAL NOT NULL,
@@ -15,6 +18,7 @@ CREATE TABLE "Invite" (
     "role" "UserRole" NOT NULL,
     "organization_id" INTEGER NOT NULL,
     "organization_name" TEXT NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Invite_pkey" PRIMARY KEY ("id")
 );
@@ -76,6 +80,18 @@ CREATE TABLE "Property" (
     "organization_id" INTEGER NOT NULL,
 
     CONSTRAINT "Property_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Expense" (
+    "id" SERIAL NOT NULL,
+    "description" TEXT NOT NULL,
+    "property_id" INTEGER NOT NULL,
+    "organization_id" INTEGER NOT NULL,
+    "amount" DOUBLE PRECISION NOT NULL,
+    "category" "ExpenseType" NOT NULL,
+
+    CONSTRAINT "Expense_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -176,6 +192,9 @@ ALTER TABLE "LinkedBankAccounts" ADD CONSTRAINT "LinkedBankAccounts_user_id_fkey
 
 -- AddForeignKey
 ALTER TABLE "Property" ADD CONSTRAINT "Property_organization_id_fkey" FOREIGN KEY ("organization_id") REFERENCES "Organization"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Expense" ADD CONSTRAINT "Expense_property_id_fkey" FOREIGN KEY ("property_id") REFERENCES "Property"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Unit" ADD CONSTRAINT "Unit_property_id_fkey" FOREIGN KEY ("property_id") REFERENCES "Property"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

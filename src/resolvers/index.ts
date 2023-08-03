@@ -18,6 +18,7 @@ import {
 import { issueAttachment, issueAttachments } from "./issue-attachments";
 import { payment, payments } from "./payments";
 import { invites, createInvite, acceptInvite } from "./invite";
+import { expenses, createExpense } from "./expenses";
 
 const QueryRoot = new GraphQLObjectType({
   name: "Query",
@@ -41,6 +42,7 @@ const QueryRoot = new GraphQLObjectType({
     issueAttachment,
     issueAttachments,
     invites,
+    expenses,
   }),
 });
 
@@ -54,6 +56,7 @@ const MutationRoot = new GraphQLObjectType({
     setIssueAssignment,
     createInvite,
     acceptInvite,
+    createExpense,
   }),
 });
 

@@ -14,6 +14,7 @@ model Invite {
   role              UserRole
   organization_id   Int
   organization_name String
+  created_at        DateTime @default(now())
 }
 
 model User {
@@ -68,9 +69,20 @@ model Property {
   zip_code        String
   images          String[]
   organization_id Int
+  expenses        Expense[]
   issues          Issue[]
   organization    Organization @relation(fields: [organization_id], references: [id])
   units           Unit[]
+}
+
+model Expense {
+  id              Int         @id @default(autoincrement())
+  description     String
+  property_id     Int
+  organization_id Int
+  amount          Float
+  category        ExpenseType
+  Property        Property    @relation(fields: [property_id], references: [id])
 }
 
 model Unit {
@@ -147,4 +159,10 @@ enum UserRole {
   owner
   employee
   resident
+}
+
+enum ExpenseType {
+  repair
+  hardware
+  management
 }

@@ -22,9 +22,6 @@ export class PropertyController {
       where: {
         organization_id: ID,
       },
-      include: {
-        units: true,
-      },
     });
   }
 
@@ -35,6 +32,8 @@ export class PropertyController {
       },
       include: {
         units: true,
+        issues: true,
+        expenses: true,
       },
     });
   }
@@ -42,9 +41,6 @@ export class PropertyController {
   public static createProperty(args: ICreateProperty) {
     return DB.property.create({
       data: args,
-      include: {
-        units: true,
-      },
     });
   }
 }
