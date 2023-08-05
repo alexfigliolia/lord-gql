@@ -19,6 +19,18 @@ export class OrgController {
     });
   }
 
+  public static async queryUsersByOrgID(ID: number) {
+    const org = await DB.organization.findUnique({
+      where: {
+        id: ID,
+      },
+      include: {
+        users: true,
+      },
+    });
+    return org?.users || [];
+  }
+
   public static queryByAffiliation(user_id: number) {
     return DB.organization.findMany({
       where: {
@@ -28,7 +40,21 @@ export class OrgController {
           },
         },
       },
-      include: this.includes,
+      include: {
+        _count: {
+          select: {
+            issues: {
+              where: {
+                status: {
+                  not: "complete",
+                },
+              },
+            },
+            properties: true,
+            users: true,
+          },
+        },
+      },
     });
   }
 

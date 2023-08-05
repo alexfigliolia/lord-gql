@@ -44,7 +44,7 @@ export const OrganizationType = new GraphQLObjectType({
 });
 
 export const organization: GraphQLFieldConfig<any, Context, OrgByID> = {
-  type: OrganizationType,
+  type: Schema.nonNull(OrganizationType),
   args: {
     id: {
       type: Schema.nonNull(GraphQLInt),
@@ -57,7 +57,7 @@ export const organization: GraphQLFieldConfig<any, Context, OrgByID> = {
 };
 
 export const organizations: GraphQLFieldConfig<any, Context, OrgByOwner> = {
-  type: new GraphQLList(OrganizationType),
+  type: Schema.nonNullArray(OrganizationType),
   args: {
     owner_id: {
       type: Schema.nonNull(GraphQLInt),
@@ -74,7 +74,7 @@ export const organizationAffiliations: GraphQLFieldConfig<
   Context,
   OrgByAffiliation
 > = {
-  type: new GraphQLList(OrganizationType),
+  type: Schema.nonNullArray(OrganizationType),
   args: {
     user_id: {
       type: Schema.nonNull(GraphQLInt),
@@ -83,5 +83,18 @@ export const organizationAffiliations: GraphQLFieldConfig<
   },
   resolve: (_: any, { user_id }) => {
     return OrgController.queryByAffiliation(user_id);
+  },
+};
+
+export const organizationsUsers: GraphQLFieldConfig<any, Context, OrgByID> = {
+  type: Schema.nonNullArray(UserType),
+  args: {
+    id: {
+      type: Schema.nonNull(GraphQLInt),
+      description: "primary key",
+    },
+  },
+  resolve: (_: any, { id }) => {
+    return OrgController.queryUsersByOrgID(id);
   },
 };

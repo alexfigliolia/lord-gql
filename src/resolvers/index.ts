@@ -4,8 +4,10 @@ import { login, logout, onboard, verifyToken } from "./authentication";
 import {
   organization,
   organizations,
+  organizationsUsers,
   organizationAffiliations,
 } from "./organization";
+import { organizationStats } from "./organization-stats";
 import { property, properties, createProperty } from "./property";
 import { lease, leases } from "./lease";
 import {
@@ -30,6 +32,8 @@ const QueryRoot = new GraphQLObjectType({
     verifyToken,
     organization,
     organizations,
+    organizationStats,
+    organizationsUsers,
     organizationAffiliations,
     property,
     properties,
