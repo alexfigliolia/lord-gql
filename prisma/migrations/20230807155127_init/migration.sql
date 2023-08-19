@@ -170,9 +170,6 @@ CREATE TABLE "_LeaseToUser" (
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Organization_owner_id_key" ON "Organization"("owner_id");
-
--- CreateIndex
 CREATE UNIQUE INDEX "_OrganizationToUser_AB_unique" ON "_OrganizationToUser"("A", "B");
 
 -- CreateIndex

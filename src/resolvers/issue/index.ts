@@ -74,6 +74,24 @@ export const IssueType = new GraphQLObjectType({
       type: Schema.nonNull(GraphQLString),
       resolve: (issue) => issue.description,
     },
+    property: {
+      type: Schema.nonNull(
+        new GraphQLObjectType({
+          name: "issueProperty",
+          fields: {
+            id: {
+              type: Schema.nonNull(GraphQLInt),
+              resolve: (property) => property.id,
+            },
+            name: {
+              type: Schema.nonNull(GraphQLString),
+              resolve: (property) => property.name,
+            },
+          },
+        })
+      ),
+      resolve: (issue) => issue.property,
+    },
     assigned_id: {
       type: GraphQLInt,
       resolve: (issue) => issue.assigned_id,

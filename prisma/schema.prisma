@@ -32,7 +32,7 @@ model User {
 
 model Organization {
   id         Int        @id @default(autoincrement())
-  owner_id   Int        @unique
+  owner_id   Int
   name       String
   issues     Issue[]
   properties Property[]
@@ -82,6 +82,7 @@ model Expense {
   organization_id Int
   amount          Float
   category        ExpenseType
+  created_at      DateTime    @default(now())
   Property        Property    @relation(fields: [property_id], references: [id])
 }
 
@@ -103,6 +104,7 @@ model Lease {
   end_date   DateTime
   active     Boolean
   created_at DateTime   @default(now())
+  amount     Float
   unit       Unit       @relation(fields: [unit_id], references: [id])
   payments   Payments[]
   users      User[]     @relation("LeaseToUser")
@@ -162,7 +164,7 @@ enum UserRole {
 }
 
 enum ExpenseType {
-  repair
+  labor
   hardware
   management
 }

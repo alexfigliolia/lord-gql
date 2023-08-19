@@ -32,6 +32,14 @@ export class InviteController {
     });
   }
 
+  public static findByID(id: number) {
+    return DB.invite.findFirst({
+      where: {
+        id,
+      },
+    });
+  }
+
   static create(data: IInvite) {
     return DB.invite.create({
       data,
@@ -48,8 +56,15 @@ export class InviteController {
 
   public static async acceptInvite(args: AccountFromInvite) {
     const { invite_id, ...rest } = args;
-    const user = await AuthController.createUserFromInvite(rest);
-    await this.deleteByID(invite_id);
-    return user;
+    try {
+      await this.findByID(invite_id);
+      const user = await AuthController.createUserFromInvite(rest);
+      await this.deleteByID(invite_id);
+      return user;
+    } catch (error) {
+      throw new GraphQLError(
+        "We could not locate any pending invitations sent to this email address"
+      );
+    }
   }
 }

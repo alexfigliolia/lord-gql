@@ -1,4 +1,5 @@
 import { DB } from "db/Client";
+import type { OrgByID } from "./types";
 
 export class OrgController {
   public static queryByOwnerID(ID: number) {
@@ -68,6 +69,31 @@ export class OrgController {
     });
   }
 
+  public static createAndGetStats(name: string, owner: number) {
+    return DB.organization.create({
+      data: {
+        name: name,
+        owner_id: owner,
+        users: { connect: { id: owner } },
+      },
+      include: {
+        _count: {
+          select: {
+            issues: {
+              where: {
+                status: {
+                  not: "complete",
+                },
+              },
+            },
+            properties: true,
+            users: true,
+          },
+        },
+      },
+    });
+  }
+
   public static addUser(user_id: number, org_id: number) {
     return DB.organization.update({
       where: {
@@ -87,7 +113,11 @@ export class OrgController {
     return {
       users: true,
       issues: this.issues,
-      properties: true,
+      properties: {
+        include: {
+          units: true,
+        },
+      },
     } as const;
   }
 
@@ -103,7 +133,24 @@ export class OrgController {
             id: true,
           },
         },
+        property: {
+          select: {
+            name: true,
+            id: true,
+          },
+        },
       },
     } as const;
+  }
+
+  public static async findAvailableLessors({ id }: OrgByID) {
+    return DB.organization.findFirst({
+      where: {
+        id,
+      },
+      select: {
+        users: true,
+      },
+    });
   }
 }

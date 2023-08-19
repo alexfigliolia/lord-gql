@@ -51,7 +51,7 @@ export const UserType = new GraphQLObjectType({
   },
 });
 
-export const user: GraphQLFieldConfig<any, any> = {
+export const user: GraphQLFieldConfig<any, any, UserArgs> = {
   type: UserType,
   args: {
     id: {
@@ -59,12 +59,12 @@ export const user: GraphQLFieldConfig<any, any> = {
       description: "primary key",
     },
   },
-  resolve: (_: any, args: UserArgs) => {
+  resolve: (_, args) => {
     return UserController.routeSingle(args);
   },
 };
 
-export const users: GraphQLFieldConfig<any, any> = {
+export const users: GraphQLFieldConfig<any, any, UserArgs> = {
   type: new GraphQLList(UserType),
   args: {
     name: {
@@ -72,7 +72,7 @@ export const users: GraphQLFieldConfig<any, any> = {
       description: "search by name",
     },
   },
-  resolve: (_: any, args: UserArgs) => {
+  resolve: (_, args) => {
     return UserController.routeMulti(args);
   },
 };

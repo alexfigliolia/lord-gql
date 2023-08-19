@@ -1,9 +1,9 @@
 import type { GraphQLFieldConfig } from "graphql";
 import {
-  GraphQLBoolean,
   GraphQLError,
-  GraphQLObjectType,
   GraphQLString,
+  GraphQLBoolean,
+  GraphQLObjectType,
 } from "graphql";
 import { UserType } from "resolvers/user";
 import type { Context } from "resolvers/types";
@@ -21,7 +21,7 @@ const AuthenticationType = new GraphQLObjectType({
 });
 
 export const login: GraphQLFieldConfig<any, any> = {
-  type: AuthenticationType,
+  type: Schema.nonNull(AuthenticationType),
   args: {
     email: {
       type: Schema.nonNull(GraphQLString),
@@ -42,7 +42,7 @@ export const login: GraphQLFieldConfig<any, any> = {
 };
 
 export const onboard: GraphQLFieldConfig<any, any> = {
-  type: AuthenticationType,
+  type: Schema.nonNull(AuthenticationType),
   args: {
     name: {
       type: Schema.nonNull(GraphQLString),
@@ -69,7 +69,7 @@ export const onboard: GraphQLFieldConfig<any, any> = {
 };
 
 export const verifyToken: GraphQLFieldConfig<any, any> = {
-  type: AuthenticationType,
+  type: Schema.nonNull(AuthenticationType),
   resolve: (_1: any, _2: any, context: Context) => {
     try {
       const token = context.req.cookies["L_User"];
@@ -83,7 +83,7 @@ export const verifyToken: GraphQLFieldConfig<any, any> = {
 };
 
 export const logout: GraphQLFieldConfig<any, any> = {
-  type: GraphQLBoolean,
+  type: Schema.nonNull(GraphQLBoolean),
   resolve: (_1: any, _2: any, context: Context) => {
     try {
       context.res.clearCookie("L_User", AuthController.cookieOptions);

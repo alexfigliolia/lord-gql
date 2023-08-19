@@ -4,12 +4,15 @@ import { login, logout, onboard, verifyToken } from "./authentication";
 import {
   organization,
   organizations,
+  createOrganization,
   organizationsUsers,
+  organizationLessors,
   organizationAffiliations,
 } from "./organization";
 import { organizationStats } from "./organization-stats";
 import { property, properties, createProperty } from "./property";
-import { lease, leases } from "./lease";
+import { unit, units, createUnit } from "./unit";
+import { lease, leases, createLease } from "./lease";
 import {
   issue,
   issues,
@@ -34,9 +37,12 @@ const QueryRoot = new GraphQLObjectType({
     organizations,
     organizationStats,
     organizationsUsers,
+    organizationLessors,
     organizationAffiliations,
     property,
     properties,
+    unit,
+    units,
     lease,
     leases,
     payment,
@@ -55,12 +61,15 @@ const MutationRoot = new GraphQLObjectType({
   fields: () => ({
     onboard,
     createProperty,
+    createUnit,
     createIssue,
     setIssueStatus,
     setIssueAssignment,
     createInvite,
     acceptInvite,
     createExpense,
+    createOrganization,
+    createLease,
   }),
 });
 

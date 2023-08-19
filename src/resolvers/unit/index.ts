@@ -1,10 +1,10 @@
 import type { GraphQLFieldConfig } from "graphql";
 import { GraphQLInt, GraphQLString, GraphQLObjectType } from "graphql";
 import { UnitController } from "./UnitController";
-import type { UnitQueryArgs } from "./types";
 import { IssueType } from "resolvers/issue";
 import { LeaseType } from "resolvers/lease";
 import { Schema } from "modules/Schema";
+import type { ICreateUnit } from "./types";
 
 export const UnitType = new GraphQLObjectType({
   name: "unit",
@@ -40,19 +40,49 @@ export const UnitType = new GraphQLObjectType({
   },
 });
 
-export const property: GraphQLFieldConfig<any, any> = {
-  type: UnitType,
+export const unit: GraphQLFieldConfig<any, any, { id: number }> = {
+  type: Schema.nonNull(UnitType),
   args: {
     id: {
-      type: GraphQLInt,
+      type: Schema.nonNull(GraphQLInt),
       description: "primary key",
     },
+  },
+  resolve: (_, args) => {
+    return UnitController.queryByID(args.id);
+  },
+};
+
+export const units: GraphQLFieldConfig<any, any, { property_id: number }> = {
+  type: Schema.nonNullArray(UnitType),
+  args: {
     property_id: {
-      type: GraphQLInt,
-      description: "search by the property id",
+      type: Schema.nonNull(GraphQLInt),
+      description: "property id",
     },
   },
-  resolve: (_: any, args: UnitQueryArgs) => {
-    return UnitController.routeQuery(args);
+  resolve: (_, args) => {
+    return UnitController.queryByPropertyID(args.property_id);
+  },
+};
+
+export const createUnit: GraphQLFieldConfig<any, any, ICreateUnit> = {
+  type: Schema.nonNull(UnitType),
+  args: {
+    name: {
+      type: Schema.nonNull(GraphQLString),
+      description: "The name of the unit",
+    },
+    description: {
+      type: Schema.nonNull(GraphQLString),
+      description: "A description of the unit",
+    },
+    property_id: {
+      type: Schema.nonNull(GraphQLInt),
+      description: "property id",
+    },
+  },
+  resolve: (_, args) => {
+    return UnitController.create(args);
   },
 };

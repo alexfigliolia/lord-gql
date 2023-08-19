@@ -21,9 +21,9 @@ Server.use(
       schema: Schema,
       graphiql: true,
       context: { req, res },
-      customFormatErrorFn: (err) => {
-        return err;
-      },
+      // customFormatErrorFn: (err) => {
+      //   return err;
+      // },
     })(req, res);
   }
 );

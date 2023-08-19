@@ -9,7 +9,7 @@
     "build": "rm -rf dist && tsc --project tsconfig.build.json && tsc-alias -p tsconfig.build.json",
     "lint": "tsc --noemit && eslint ./ --fix",
     "generate-types": "npx prisma db pull && npx prisma generate",
-    "generate-migration": "npx prisma migrate dev --name"
+    "generate-migration": "npx prisma@dev migrate dev --name"
   },
   "author": "",
   "license": "ISC",
@@ -46,6 +46,7 @@
     "eslint-plugin-simple-import-sort": "^10.0.0",
     "jest": "^29.6.1",
     "jest-extended": "^4.0.0",
+    "moment": "^2.29.4",
     "nodemon": "^3.0.1",
     "pg": "^8.11.1",
     "prettier": "^2.8.8",

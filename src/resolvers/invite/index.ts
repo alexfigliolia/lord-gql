@@ -121,6 +121,6 @@ export const acceptInvite: GraphQLFieldConfig<any, Context, AccountFromInvite> =
         AuthController.generateToken(user),
         AuthController.cookieOptions
       );
-      return { user };
+      return user;
     },
   };

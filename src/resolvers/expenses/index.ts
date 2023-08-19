@@ -86,7 +86,7 @@ export const expenses: GraphQLFieldConfig<any, Context, IExpenses> = {
 };
 
 export const createExpense: GraphQLFieldConfig<any, Context, ICreateExpense> = {
-  type: Schema.nonNullArray(ExpenseType),
+  type: Schema.nonNull(ExpenseType),
   args: {
     property_id: {
       type: Schema.nonNull(GraphQLInt),

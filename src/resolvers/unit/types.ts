@@ -1,4 +1,5 @@
-export interface UnitQueryArgs {
-  id?: number;
-  property_id?: number;
+export interface ICreateUnit {
+  name: string;
+  description: string;
+  property_id: number;
 }

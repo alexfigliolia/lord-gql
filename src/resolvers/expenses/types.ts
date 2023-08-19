@@ -1,5 +1,5 @@
 export enum ExpenseType {
-  repair = "repair",
+  labor = "labor",
   hardware = "hardware",
   management = "management",
 }

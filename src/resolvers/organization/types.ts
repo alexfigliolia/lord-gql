@@ -9,3 +9,8 @@ export interface OrgByOwner {
 export interface OrgByAffiliation {
   user_id: number;
 }
+
+export interface ICreateOrg {
+  name: string;
+  owner_id: number;
+}

@@ -1,10 +1,5 @@
 import type { GraphQLFieldConfig } from "graphql";
-import {
-  GraphQLInt,
-  GraphQLObjectType,
-  GraphQLString,
-  GraphQLList,
-} from "graphql";
+import { GraphQLInt, GraphQLObjectType, GraphQLString } from "graphql";
 import { UnitType } from "resolvers/unit";
 import { PropertyController } from "./PropertyController";
 import type { ICreateProperty, PropertyQueryArgs } from "./types";
@@ -71,21 +66,25 @@ export const PropertyType = new GraphQLObjectType({
   },
 });
 
-export const property: GraphQLFieldConfig<any, any> = {
-  type: PropertyType,
+export const property: GraphQLFieldConfig<any, any, { id: number }> = {
+  type: Schema.nonNull(PropertyType),
   args: {
     id: {
       type: Schema.nonNull(GraphQLInt),
       description: "primary key",
     },
   },
-  resolve: (_: any, args: PropertyQueryArgs) => {
-    return PropertyController.routeSingle(args);
+  resolve: (_, args) => {
+    return PropertyController.queryByID(args.id);
   },
 };
 
-export const properties: GraphQLFieldConfig<any, Context, PropertyQueryArgs> = {
-  type: new GraphQLList(PropertyType),
+export const properties: GraphQLFieldConfig<
+  any,
+  Context,
+  { organization_id: number }
+> = {
+  type: Schema.nonNullArray(PropertyType),
   args: {
     organization_id: {
       type: Schema.nonNull(GraphQLInt),
@@ -93,13 +92,13 @@ export const properties: GraphQLFieldConfig<any, Context, PropertyQueryArgs> = {
     },
   },
   resolve: (_, args) => {
-    return PropertyController.routeMulti(args);
+    return PropertyController.queryByOrganizationID(args.organization_id);
   },
 };
 
 export const createProperty: GraphQLFieldConfig<any, Context, ICreateProperty> =
   {
-    type: PropertyType,
+    type: Schema.nonNull(PropertyType),
     args: {
       organization_id: {
         type: Schema.nonNull(GraphQLInt),

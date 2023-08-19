@@ -1,17 +1,18 @@
 import type { GraphQLFieldConfig } from "graphql";
-import {
-  GraphQLInt,
-  GraphQLObjectType,
-  GraphQLList,
-  GraphQLString,
-} from "graphql";
+import { GraphQLInt, GraphQLObjectType, GraphQLString } from "graphql";
 import { OrgController } from "./OrgController";
-import type { OrgByAffiliation, OrgByID, OrgByOwner } from "./types";
+import type {
+  ICreateOrg,
+  OrgByAffiliation,
+  OrgByID,
+  OrgByOwner,
+} from "./types";
 import { UserType } from "resolvers/user";
 import { IssueType } from "resolvers/issue";
 import { PropertyType } from "resolvers/property";
 import { Schema } from "modules/Schema";
 import type { Context } from "resolvers/types";
+import { OrganizationStats } from "resolvers/organization-stats";
 
 export const OrganizationType = new GraphQLObjectType({
   name: "organization",
@@ -98,3 +99,35 @@ export const organizationsUsers: GraphQLFieldConfig<any, Context, OrgByID> = {
     return OrgController.queryUsersByOrgID(id);
   },
 };
+
+export const organizationLessors: GraphQLFieldConfig<any, any, OrgByID> = {
+  type: Schema.nonNullArray(UserType),
+  args: {
+    id: {
+      type: Schema.nonNull(GraphQLInt),
+      description: "primary key",
+    },
+  },
+  resolve: async (_, args) => {
+    const result = await OrgController.findAvailableLessors(args);
+    return result?.users || [];
+  },
+};
+
+export const createOrganization: GraphQLFieldConfig<any, Context, ICreateOrg> =
+  {
+    type: Schema.nonNull(OrganizationStats),
+    args: {
+      name: {
+        type: Schema.nonNull(GraphQLString),
+        description: "A name for your new organization",
+      },
+      owner_id: {
+        type: Schema.nonNull(GraphQLInt),
+        description: "A user ID for the person creating the organization",
+      },
+    },
+    resolve: (_, { name, owner_id }) => {
+      return OrgController.createAndGetStats(name, owner_id);
+    },
+  };
