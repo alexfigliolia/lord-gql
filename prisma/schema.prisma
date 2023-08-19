@@ -26,6 +26,7 @@ model User {
   credit_cards         CreditCard[]
   assignments          Issue[]
   linked_bank_accounts LinkedBankAccounts[]
+  payments             Payment[]
   leases               Lease[]              @relation("LeaseToUser")
   organizations        Organization[]       @relation("OrganizationToUser")
 }
@@ -71,6 +72,8 @@ model Property {
   organization_id Int
   expenses        Expense[]
   issues          Issue[]
+  leases          Lease[]
+  payments        Payment[]
   organization    Organization @relation(fields: [organization_id], references: [id])
   units           Unit[]
 }
@@ -87,35 +90,45 @@ model Expense {
 }
 
 model Unit {
-  id          Int      @id @default(autoincrement())
+  id          Int       @id @default(autoincrement())
   name        String
-  description String   @default("")
+  description String    @default("")
   property_id Int
   images      String[]
   issues      Issue[]
   leases      Lease[]
-  property    Property @relation(fields: [property_id], references: [id])
+  Payment     Payment[]
+  property    Property  @relation(fields: [property_id], references: [id])
 }
 
 model Lease {
-  id         Int        @id @default(autoincrement())
-  unit_id    Int
-  start_date DateTime
-  end_date   DateTime
-  active     Boolean
-  created_at DateTime   @default(now())
-  amount     Float
-  unit       Unit       @relation(fields: [unit_id], references: [id])
-  payments   Payments[]
-  users      User[]     @relation("LeaseToUser")
+  id          Int       @id @default(autoincrement())
+  unit_id     Int
+  property_id Int
+  start_date  DateTime
+  end_date    DateTime
+  active      Boolean
+  created_at  DateTime  @default(now())
+  amount      Float
+  property    Property  @relation(fields: [property_id], references: [id])
+  unit        Unit      @relation(fields: [unit_id], references: [id])
+  payments    Payment[]
+  users       User[]    @relation("LeaseToUser")
 }
 
-model Payments {
-  id         Int      @id @default(autoincrement())
-  lease_id   Int
-  amount     Float
-  created_at DateTime @default(now())
-  lease      Lease    @relation(fields: [lease_id], references: [id])
+model Payment {
+  id          Int      @id @default(autoincrement())
+  lease_id    Int
+  amount      Float
+  unit_id     Int
+  user_id     Int
+  property_id Int
+  description String
+  created_at  DateTime @default(now())
+  lease       Lease    @relation(fields: [lease_id], references: [id])
+  property    Property @relation(fields: [property_id], references: [id])
+  unit        Unit     @relation(fields: [unit_id], references: [id])
+  user        User     @relation(fields: [user_id], references: [id])
 }
 
 model Issue {

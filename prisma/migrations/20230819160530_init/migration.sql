@@ -8,7 +8,7 @@ CREATE TYPE "IssueStatus" AS ENUM ('complete', 'open', 'inprogress');
 CREATE TYPE "UserRole" AS ENUM ('owner', 'employee', 'resident');
 
 -- CreateEnum
-CREATE TYPE "ExpenseType" AS ENUM ('repair', 'hardware', 'management');
+CREATE TYPE "ExpenseType" AS ENUM ('labor', 'hardware', 'management');
 
 -- CreateTable
 CREATE TABLE "Invite" (
@@ -90,6 +90,7 @@ CREATE TABLE "Expense" (
     "organization_id" INTEGER NOT NULL,
     "amount" DOUBLE PRECISION NOT NULL,
     "category" "ExpenseType" NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Expense_pkey" PRIMARY KEY ("id")
 );
@@ -109,22 +110,28 @@ CREATE TABLE "Unit" (
 CREATE TABLE "Lease" (
     "id" SERIAL NOT NULL,
     "unit_id" INTEGER NOT NULL,
+    "property_id" INTEGER NOT NULL,
     "start_date" TIMESTAMP(3) NOT NULL,
     "end_date" TIMESTAMP(3) NOT NULL,
     "active" BOOLEAN NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "amount" DOUBLE PRECISION NOT NULL,
 
     CONSTRAINT "Lease_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "Payments" (
+CREATE TABLE "Payment" (
     "id" SERIAL NOT NULL,
     "lease_id" INTEGER NOT NULL,
     "amount" DOUBLE PRECISION NOT NULL,
+    "unit_id" INTEGER NOT NULL,
+    "user_id" INTEGER NOT NULL,
+    "property_id" INTEGER NOT NULL,
+    "description" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "Payments_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Payment_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -197,10 +204,22 @@ ALTER TABLE "Expense" ADD CONSTRAINT "Expense_property_id_fkey" FOREIGN KEY ("pr
 ALTER TABLE "Unit" ADD CONSTRAINT "Unit_property_id_fkey" FOREIGN KEY ("property_id") REFERENCES "Property"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "Lease" ADD CONSTRAINT "Lease_property_id_fkey" FOREIGN KEY ("property_id") REFERENCES "Property"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "Lease" ADD CONSTRAINT "Lease_unit_id_fkey" FOREIGN KEY ("unit_id") REFERENCES "Unit"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Payments" ADD CONSTRAINT "Payments_lease_id_fkey" FOREIGN KEY ("lease_id") REFERENCES "Lease"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Payment" ADD CONSTRAINT "Payment_lease_id_fkey" FOREIGN KEY ("lease_id") REFERENCES "Lease"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Payment" ADD CONSTRAINT "Payment_property_id_fkey" FOREIGN KEY ("property_id") REFERENCES "Property"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Payment" ADD CONSTRAINT "Payment_unit_id_fkey" FOREIGN KEY ("unit_id") REFERENCES "Unit"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Payment" ADD CONSTRAINT "Payment_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Issue" ADD CONSTRAINT "Issue_assigned_id_fkey" FOREIGN KEY ("assigned_id") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;

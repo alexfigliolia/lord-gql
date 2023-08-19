@@ -9,7 +9,7 @@ import {
 import { LeaseController } from "./LeaseController";
 import type { CreateLeaseArgs, LeaseQueryArgs } from "./types";
 import { Schema } from "modules/Schema";
-import { PaymentsType } from "resolvers/payments";
+import { PaymentType } from "resolvers/payments";
 import { UserType } from "resolvers/user";
 
 export const LeaseType = new GraphQLObjectType({
@@ -28,7 +28,7 @@ export const LeaseType = new GraphQLObjectType({
       resolve: (lease) => lease.amount,
     },
     payments: {
-      type: Schema.nonNullArray(PaymentsType),
+      type: Schema.nonNullArray(PaymentType),
       resolve: (lease) => lease.payments,
     },
     start_date: {
@@ -38,6 +38,10 @@ export const LeaseType = new GraphQLObjectType({
     end_date: {
       type: Schema.nonNull(GraphQLString),
       resolve: (lease) => lease.end_date,
+    },
+    property_id: {
+      type: Schema.nonNull(GraphQLInt),
+      resolve: (lease) => lease.property_id,
     },
     active: {
       type: Schema.nonNull(GraphQLBoolean),
@@ -84,6 +88,9 @@ export const createLease: GraphQLFieldConfig<any, any, CreateLeaseArgs> = {
   type: Schema.nonNull(LeaseType),
   args: {
     unit_id: {
+      type: Schema.nonNull(GraphQLInt),
+    },
+    property_id: {
       type: Schema.nonNull(GraphQLInt),
     },
     start_date: {

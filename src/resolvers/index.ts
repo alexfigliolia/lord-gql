@@ -21,7 +21,7 @@ import {
   setIssueAssignment,
 } from "./issue";
 import { issueAttachment, issueAttachments } from "./issue-attachments";
-import { payment, payments } from "./payments";
+import { payment, payments, createPayment } from "./payments";
 import { invites, createInvite, acceptInvite } from "./invite";
 import { expenses, createExpense } from "./expenses";
 
@@ -68,6 +68,7 @@ const MutationRoot = new GraphQLObjectType({
     createInvite,
     acceptInvite,
     createExpense,
+    createPayment,
     createOrganization,
     createLease,
   }),

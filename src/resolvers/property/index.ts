@@ -2,11 +2,12 @@ import type { GraphQLFieldConfig } from "graphql";
 import { GraphQLInt, GraphQLObjectType, GraphQLString } from "graphql";
 import { UnitType } from "resolvers/unit";
 import { PropertyController } from "./PropertyController";
-import type { ICreateProperty, PropertyQueryArgs } from "./types";
+import type { ICreateProperty } from "./types";
 import type { Context } from "resolvers/types";
 import { Schema } from "modules/Schema";
 import { IssueType } from "resolvers/issue";
 import { ExpenseType } from "resolvers/expenses";
+import { PaymentType } from "resolvers/payments";
 
 export const PropertyType = new GraphQLObjectType({
   name: "property",
@@ -62,6 +63,10 @@ export const PropertyType = new GraphQLObjectType({
     expenses: {
       type: Schema.nonNullArray(ExpenseType),
       resolve: (property) => property.expenses,
+    },
+    payments: {
+      type: Schema.nonNullArray(PaymentType),
+      resolve: (property) => property.payments,
     },
   },
 });

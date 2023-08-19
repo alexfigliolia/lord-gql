@@ -10,6 +10,7 @@ export class LeaseController {
     unit_id,
     end_date,
     start_date,
+    property_id,
   }: CreateLeaseArgs) {
     const diff = moment().utc().diff(moment(end_date));
     return DB.lease.create({
@@ -18,6 +19,7 @@ export class LeaseController {
         unit_id,
         end_date,
         start_date,
+        property_id,
         active: diff < 0,
         users: {
           connect: users.map((id) => ({ id })),
