@@ -20,6 +20,10 @@ export const PaymentType = new GraphQLObjectType({
       type: Schema.nonNull(GraphQLString),
       resolve: (payment) => payment.description,
     },
+    organization_id: {
+      type: Schema.nonNull(GraphQLInt),
+      resolve: (payment) => payment.organization_id,
+    },
     lease_id: {
       type: Schema.nonNull(GraphQLInt),
       resolve: (payment) => payment.lease_id,
@@ -83,6 +87,10 @@ export const createPayment: GraphQLFieldConfig<any, any, ICreatePayment> = {
     description: {
       type: Schema.nonNull(GraphQLString),
       description: "A short description of the payment",
+    },
+    organization_id: {
+      type: Schema.nonNull(GraphQLInt),
+      description: "The organization the payment belongs to",
     },
     unit_id: {
       type: Schema.nonNull(GraphQLInt),

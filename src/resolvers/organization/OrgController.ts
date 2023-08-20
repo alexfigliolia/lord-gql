@@ -1,5 +1,6 @@
 import { DB } from "db/Client";
 import type { OrgByID } from "./types";
+import moment from "moment";
 
 export class OrgController {
   public static queryByOwnerID(ID: number) {
@@ -110,12 +111,67 @@ export class OrgController {
   }
 
   private static get includes() {
+    const oneYearAgo = moment().utc().subtract(1, "year").toDate();
     return {
       users: true,
       issues: this.issues,
       properties: {
         include: {
-          units: true,
+          expenses: {
+            where: {
+              created_at: {
+                gte: oneYearAgo,
+              },
+            },
+            orderBy: {
+              created_at: "asc",
+            },
+          },
+          payments: {
+            where: {
+              created_at: {
+                gte: oneYearAgo,
+              },
+            },
+            orderBy: {
+              created_at: "asc",
+            },
+          },
+          units: {
+            include: {
+              leases: {
+                where: {
+                  end_date: {
+                    gte: oneYearAgo,
+                  },
+                },
+                orderBy: {
+                  created_at: "asc",
+                },
+              },
+            },
+          },
+          issues: this.issues,
+        },
+      },
+      expenses: {
+        where: {
+          created_at: {
+            gte: oneYearAgo,
+          },
+        },
+        orderBy: {
+          created_at: "asc",
+        },
+      },
+      payments: {
+        where: {
+          created_at: {
+            gte: oneYearAgo,
+          },
+        },
+        orderBy: {
+          created_at: "asc",
         },
       },
     } as const;

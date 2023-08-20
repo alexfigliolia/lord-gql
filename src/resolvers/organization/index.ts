@@ -9,10 +9,12 @@ import type {
 } from "./types";
 import { UserType } from "resolvers/user";
 import { IssueType } from "resolvers/issue";
-import { PropertyType } from "resolvers/property";
 import { Schema } from "modules/Schema";
 import type { Context } from "resolvers/types";
 import { OrganizationStats } from "resolvers/organization-stats";
+import { PropertyType } from "resolvers/property/schema";
+import { ExpenseType } from "resolvers/expenses";
+import { PaymentType } from "resolvers/payments";
 
 export const OrganizationType = new GraphQLObjectType({
   name: "organization",
@@ -40,6 +42,14 @@ export const OrganizationType = new GraphQLObjectType({
     properties: {
       type: Schema.nonNullArray(PropertyType),
       resolve: (org) => org.properties,
+    },
+    expenses: {
+      type: Schema.nonNullArray(ExpenseType),
+      resolve: (org) => org.expenses,
+    },
+    payments: {
+      type: Schema.nonNullArray(PaymentType),
+      resolve: (org) => org.payments,
     },
   },
 });

@@ -10,7 +10,7 @@ import {
   organizationAffiliations,
 } from "./organization";
 import { organizationStats } from "./organization-stats";
-import { property, properties, createProperty } from "./property";
+import { properties, propertyUI, createProperty } from "./property";
 import { unit, units, createUnit } from "./unit";
 import { lease, leases, createLease } from "./lease";
 import {
@@ -39,7 +39,7 @@ const QueryRoot = new GraphQLObjectType({
     organizationsUsers,
     organizationLessors,
     organizationAffiliations,
-    property,
+    propertyUI,
     properties,
     unit,
     units,

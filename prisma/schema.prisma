@@ -35,7 +35,9 @@ model Organization {
   id         Int        @id @default(autoincrement())
   owner_id   Int
   name       String
+  expenses   Expense[]
   issues     Issue[]
+  payments   Payment[]
   properties Property[]
   users      User[]     @relation("OrganizationToUser")
 }
@@ -79,14 +81,15 @@ model Property {
 }
 
 model Expense {
-  id              Int         @id @default(autoincrement())
+  id              Int          @id @default(autoincrement())
   description     String
   property_id     Int
   organization_id Int
   amount          Float
   category        ExpenseType
-  created_at      DateTime    @default(now())
-  Property        Property    @relation(fields: [property_id], references: [id])
+  created_at      DateTime     @default(now())
+  organization    Organization @relation(fields: [organization_id], references: [id])
+  property        Property     @relation(fields: [property_id], references: [id])
 }
 
 model Unit {
@@ -97,7 +100,7 @@ model Unit {
   images      String[]
   issues      Issue[]
   leases      Lease[]
-  Payment     Payment[]
+  payments    Payment[]
   property    Property  @relation(fields: [property_id], references: [id])
 }
 
@@ -117,18 +120,20 @@ model Lease {
 }
 
 model Payment {
-  id          Int      @id @default(autoincrement())
-  lease_id    Int
-  amount      Float
-  unit_id     Int
-  user_id     Int
-  property_id Int
-  description String
-  created_at  DateTime @default(now())
-  lease       Lease    @relation(fields: [lease_id], references: [id])
-  property    Property @relation(fields: [property_id], references: [id])
-  unit        Unit     @relation(fields: [unit_id], references: [id])
-  user        User     @relation(fields: [user_id], references: [id])
+  id              Int          @id @default(autoincrement())
+  lease_id        Int
+  amount          Float
+  unit_id         Int
+  user_id         Int
+  property_id     Int
+  organization_id Int
+  description     String
+  created_at      DateTime     @default(now())
+  lease           Lease        @relation(fields: [lease_id], references: [id])
+  organization    Organization @relation(fields: [organization_id], references: [id])
+  property        Property     @relation(fields: [property_id], references: [id])
+  unit            Unit         @relation(fields: [unit_id], references: [id])
+  user            User         @relation(fields: [user_id], references: [id])
 }
 
 model Issue {
