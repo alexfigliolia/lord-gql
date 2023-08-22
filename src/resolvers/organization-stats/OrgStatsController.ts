@@ -4,9 +4,23 @@ export class OrgStatsController {
   public static organizationStats(user_id: number) {
     return DB.organization.findMany({
       where: {
-        users: {
-          some: {
-            id: user_id,
+        AND: {
+          users: {
+            some: {
+              id: user_id,
+            },
+          },
+          roles: {
+            some: {
+              AND: {
+                user_id,
+                role: {
+                  not: {
+                    equals: "resident",
+                  },
+                },
+              },
+            },
           },
         },
       },

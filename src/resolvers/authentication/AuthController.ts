@@ -6,6 +6,7 @@ import type { CookieOptions } from "express";
 import { Environment } from "Environment";
 import type { LoginArgs, OnBoardArgs, User, UserFromInvite } from "./types";
 import { OrgController } from "resolvers/organization/OrgController";
+import { RoleController } from "resolvers/roles/RoleController";
 
 export class AuthController {
   private static SALTS = 10;
@@ -30,7 +31,6 @@ export class AuthController {
     const user = await DB.user.create({
       data: {
         name: userArgs.name,
-        role: userArgs.role,
         email: userArgs.email.toLocaleLowerCase(),
         password: await bcrypt.hash(userArgs.password, this.SALTS),
       },
@@ -56,17 +56,24 @@ export class AuthController {
     const newAccount = await DB.user.create({
       data: {
         name,
-        role: "owner",
         email: email.toLocaleLowerCase(),
         password: await bcrypt.hash(password, this.SALTS),
       },
     });
-    await OrgController.createOrganization(organization, newAccount.id);
+    const newOrg = await OrgController.createOrganization(
+      organization,
+      newAccount.id
+    );
+    await RoleController.create({
+      organization_id: newOrg.id,
+      user_id: newAccount.id,
+      role: "owner",
+    });
     return newAccount;
   }
 
-  public static generateToken<T extends User>({ role, email, name, id }: T) {
-    return JWT.sign({ id, name, role, email }, Environment.TOKEN);
+  public static generateToken<T extends User>({ email, name, id }: T) {
+    return JWT.sign({ id, name, email }, Environment.TOKEN);
   }
 
   public static verifyToken(token: string) {

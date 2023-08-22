@@ -50,7 +50,7 @@ export const organizationStats: GraphQLFieldConfig<any, Context, OrgByID> = {
   args: {
     id: {
       type: Schema.nonNull(GraphQLInt),
-      description: "primary key",
+      description: "user's primary key",
     },
   },
   resolve: (_: any, { id }) => {

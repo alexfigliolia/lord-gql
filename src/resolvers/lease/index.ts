@@ -23,6 +23,10 @@ export const LeaseType = new GraphQLObjectType({
       type: Schema.nonNull(GraphQLInt),
       resolve: (lease) => lease.unit_id,
     },
+    organization_id: {
+      type: Schema.nonNull(GraphQLInt),
+      resolve: (lease) => lease.organization_id,
+    },
     amount: {
       type: Schema.nonNull(GraphQLFloat),
       resolve: (lease) => lease.amount,
@@ -91,6 +95,9 @@ export const createLease: GraphQLFieldConfig<any, any, CreateLeaseArgs> = {
       type: Schema.nonNull(GraphQLInt),
     },
     property_id: {
+      type: Schema.nonNull(GraphQLInt),
+    },
+    organization_id: {
       type: Schema.nonNull(GraphQLInt),
     },
     start_date: {

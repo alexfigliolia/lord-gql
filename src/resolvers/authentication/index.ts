@@ -1,27 +1,13 @@
 import type { GraphQLFieldConfig } from "graphql";
-import {
-  GraphQLError,
-  GraphQLString,
-  GraphQLBoolean,
-  GraphQLObjectType,
-} from "graphql";
+import { GraphQLError, GraphQLString, GraphQLBoolean } from "graphql";
 import { UserType } from "resolvers/user";
 import type { Context } from "resolvers/types";
 import type { LoginArgs, OnBoardArgs } from "./types";
 import { AuthController } from "./AuthController";
 import { Schema } from "modules/Schema";
 
-const AuthenticationType = new GraphQLObjectType({
-  name: "authentication",
-  fields: {
-    user: {
-      type: Schema.nonNull(UserType),
-    },
-  },
-});
-
-export const login: GraphQLFieldConfig<any, any> = {
-  type: Schema.nonNull(AuthenticationType),
+export const login: GraphQLFieldConfig<any, Context, LoginArgs> = {
+  type: Schema.nonNull(UserType),
   args: {
     email: {
       type: Schema.nonNull(GraphQLString),
@@ -30,19 +16,19 @@ export const login: GraphQLFieldConfig<any, any> = {
       type: Schema.nonNull(GraphQLString),
     },
   },
-  resolve: async (_: any, args: LoginArgs, context: Context) => {
+  resolve: async (_, args, context) => {
     const user = await AuthController.login(args);
     context.res.cookie(
       "L_User",
       AuthController.generateToken(user),
       AuthController.cookieOptions
     );
-    return { user };
+    return user;
   },
 };
 
-export const onboard: GraphQLFieldConfig<any, any> = {
-  type: Schema.nonNull(AuthenticationType),
+export const onboard: GraphQLFieldConfig<any, Context, OnBoardArgs> = {
+  type: Schema.nonNull(UserType),
   args: {
     name: {
       type: Schema.nonNull(GraphQLString),
@@ -57,25 +43,25 @@ export const onboard: GraphQLFieldConfig<any, any> = {
       type: Schema.nonNull(GraphQLString),
     },
   },
-  resolve: async (_: any, args: OnBoardArgs, context: Context) => {
+  resolve: async (_, args, context) => {
     const user = await AuthController.onboard(args);
     context.res.cookie(
       "L_User",
       AuthController.generateToken(user),
       AuthController.cookieOptions
     );
-    return { user };
+    return user;
   },
 };
 
 export const verifyToken: GraphQLFieldConfig<any, any> = {
-  type: Schema.nonNull(AuthenticationType),
+  type: Schema.nonNull(UserType),
   resolve: (_1: any, _2: any, context: Context) => {
     try {
       const token = context.req.cookies["L_User"];
       const result = AuthController.verifyToken(token || "");
-      const { email, name, role, id } = result;
-      return { user: { id, name, role, email } };
+      const { email, name, id } = result;
+      return { id, name, email };
     } catch (error) {
       throw new GraphQLError("Authorization not found");
     }

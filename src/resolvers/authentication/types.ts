@@ -11,7 +11,6 @@ export interface SignUpArgs extends LoginArgs {
 
 export interface User extends SignUpArgs {
   id: number;
-  role: UserRoles;
 }
 
 export interface OnBoardArgs extends SignUpArgs {

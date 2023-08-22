@@ -92,6 +92,10 @@ export const createPayment: GraphQLFieldConfig<any, any, ICreatePayment> = {
       type: Schema.nonNull(GraphQLInt),
       description: "The organization the payment belongs to",
     },
+    payment_method_id: {
+      type: Schema.nonNull(GraphQLInt),
+      description: "The primary key of the payment method being used",
+    },
     unit_id: {
       type: Schema.nonNull(GraphQLInt),
       description: "The unit the payment belongs to",

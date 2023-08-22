@@ -54,16 +54,24 @@ export const OrganizationType = new GraphQLObjectType({
   },
 });
 
-export const organization: GraphQLFieldConfig<any, Context, OrgByID> = {
+export const organization: GraphQLFieldConfig<
+  any,
+  Context,
+  { id: number; user_id: number }
+> = {
   type: Schema.nonNull(OrganizationType),
   args: {
     id: {
       type: Schema.nonNull(GraphQLInt),
       description: "primary key",
     },
+    user_id: {
+      type: Schema.nonNull(GraphQLInt),
+      description: "user's primary key",
+    },
   },
-  resolve: (_: any, { id }) => {
-    return OrgController.queryByID(id);
+  resolve: (_, args) => {
+    return OrgController.queryByIDs(args);
   },
 };
 

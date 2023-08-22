@@ -1,4 +1,3 @@
-import moment from "moment";
 import { DB } from "db/Client";
 import type { CreateLeaseArgs, LeaseQueryArgs } from "./types";
 import { GraphQLError } from "graphql";
@@ -11,8 +10,8 @@ export class LeaseController {
     end_date,
     start_date,
     property_id,
+    organization_id,
   }: CreateLeaseArgs) {
-    const diff = moment().utc().diff(moment(end_date));
     return DB.lease.create({
       data: {
         amount,
@@ -20,7 +19,8 @@ export class LeaseController {
         end_date,
         start_date,
         property_id,
-        active: diff < 0,
+        active: true,
+        organization_id,
         users: {
           connect: users.map((id) => ({ id })),
         },

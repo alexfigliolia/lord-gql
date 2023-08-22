@@ -20,8 +20,15 @@ import {
   setIssueStatus,
   setIssueAssignment,
 } from "./issue";
+import { role } from "./roles";
+import { residencies } from "./residency";
 import { issueAttachment, issueAttachments } from "./issue-attachments";
 import { payment, payments, createPayment } from "./payments";
+import {
+  userPaymentMethods,
+  createPaymentMethod,
+  createLinkedBankAccount,
+} from "./user-payment-methods";
 import { invites, createInvite, acceptInvite } from "./invite";
 import { expenses, createExpense } from "./expenses";
 
@@ -30,6 +37,7 @@ const QueryRoot = new GraphQLObjectType({
   fields: () => ({
     user,
     users,
+    role,
     login,
     logout,
     verifyToken,
@@ -47,12 +55,14 @@ const QueryRoot = new GraphQLObjectType({
     leases,
     payment,
     payments,
+    residencies,
     issue,
     issues,
     issueAttachment,
     issueAttachments,
     invites,
     expenses,
+    userPaymentMethods,
   }),
 });
 
@@ -71,6 +81,8 @@ const MutationRoot = new GraphQLObjectType({
     createPayment,
     createOrganization,
     createLease,
+    createPaymentMethod,
+    createLinkedBankAccount,
   }),
 });
 

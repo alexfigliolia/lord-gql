@@ -4,26 +4,10 @@ import {
   GraphQLList,
   GraphQLString,
   GraphQLObjectType,
-  GraphQLEnumType,
 } from "graphql";
 import { UserController } from "./UserController";
 import type { UserArgs } from "./types";
 import { Schema } from "modules/Schema";
-
-export const UserRole = new GraphQLEnumType({
-  name: "UserRole",
-  values: {
-    owner: {
-      value: "owner",
-    },
-    employee: {
-      value: "employee",
-    },
-    resident: {
-      value: "resident",
-    },
-  },
-});
 
 export const UserType = new GraphQLObjectType({
   name: "user",
@@ -39,10 +23,6 @@ export const UserType = new GraphQLObjectType({
     email: {
       type: Schema.nonNull(GraphQLString),
       resolve: (user) => user.email,
-    },
-    role: {
-      type: Schema.nonNull(UserRole),
-      resolve: (user) => user.role,
     },
     password: {
       type: Schema.nonNull(GraphQLString),

@@ -17,47 +17,59 @@ model Invite {
   created_at        DateTime @default(now())
 }
 
+model UserRoleEntry {
+  id              Int          @id @default(autoincrement())
+  user_id         Int
+  organization_id Int
+  role            UserRole
+  organization    Organization @relation(fields: [organization_id], references: [id])
+  user            User         @relation(fields: [user_id], references: [id])
+}
+
 model User {
-  id                   Int                  @id @default(autoincrement())
-  email                String               @unique
+  id                   Int                 @id @default(autoincrement())
+  email                String              @unique
   password             String
   name                 String
-  role                 UserRole
-  credit_cards         CreditCard[]
   assignments          Issue[]
-  linked_bank_accounts LinkedBankAccounts[]
+  linked_bank_accounts LinkedBankAccount[]
   payments             Payment[]
-  leases               Lease[]              @relation("LeaseToUser")
-  organizations        Organization[]       @relation("OrganizationToUser")
+  payment_methods      PaymentMethod[]
+  roles                UserRoleEntry[]
+  leases               Lease[]             @relation("LeaseToUser")
+  organizations        Organization[]      @relation("OrganizationToUser")
 }
 
 model Organization {
-  id         Int        @id @default(autoincrement())
+  id         Int             @id @default(autoincrement())
   owner_id   Int
   name       String
   expenses   Expense[]
   issues     Issue[]
   payments   Payment[]
   properties Property[]
-  users      User[]     @relation("OrganizationToUser")
+  roles      UserRoleEntry[]
+  users      User[]          @relation("OrganizationToUser")
 }
 
-model CreditCard {
+model PaymentMethod {
   id         Int     @id @default(autoincrement())
   number     String
   expiration String
   cvv        String
-  validated  Boolean
+  validated  Boolean @default(false)
   user_id    Int
+  name       String
   user       User    @relation(fields: [user_id], references: [id])
 }
 
-model LinkedBankAccounts {
+model LinkedBankAccount {
   id             Int     @id @default(autoincrement())
   user_id        Int
   routing        String
   account_number String
   validated      Boolean
+  name           String
   user           User    @relation(fields: [user_id], references: [id])
 }
 
@@ -105,35 +117,37 @@ model Unit {
 }
 
 model Lease {
-  id          Int       @id @default(autoincrement())
-  unit_id     Int
-  property_id Int
-  start_date  DateTime
-  end_date    DateTime
-  active      Boolean
-  created_at  DateTime  @default(now())
-  amount      Float
-  property    Property  @relation(fields: [property_id], references: [id])
-  unit        Unit      @relation(fields: [unit_id], references: [id])
-  payments    Payment[]
-  users       User[]    @relation("LeaseToUser")
+  id              Int       @id @default(autoincrement())
+  unit_id         Int
+  property_id     Int
+  start_date      DateTime
+  end_date        DateTime
+  active          Boolean
+  organization_id Int
+  created_at      DateTime  @default(now())
+  amount          Float
+  property        Property  @relation(fields: [property_id], references: [id])
+  unit            Unit      @relation(fields: [unit_id], references: [id])
+  payments        Payment[]
+  users           User[]    @relation("LeaseToUser")
 }
 
 model Payment {
-  id              Int          @id @default(autoincrement())
-  lease_id        Int
-  amount          Float
-  unit_id         Int
-  user_id         Int
-  property_id     Int
-  organization_id Int
-  description     String
-  created_at      DateTime     @default(now())
-  lease           Lease        @relation(fields: [lease_id], references: [id])
-  organization    Organization @relation(fields: [organization_id], references: [id])
-  property        Property     @relation(fields: [property_id], references: [id])
-  unit            Unit         @relation(fields: [unit_id], references: [id])
-  user            User         @relation(fields: [user_id], references: [id])
+  id                Int          @id @default(autoincrement())
+  lease_id          Int
+  amount            Float
+  unit_id           Int
+  user_id           Int
+  property_id       Int
+  organization_id   Int
+  description       String
+  created_at        DateTime     @default(now())
+  payment_method_id Int
+  lease             Lease        @relation(fields: [lease_id], references: [id])
+  organization      Organization @relation(fields: [organization_id], references: [id])
+  property          Property     @relation(fields: [property_id], references: [id])
+  unit              Unit         @relation(fields: [unit_id], references: [id])
+  user              User         @relation(fields: [user_id], references: [id])
 }
 
 model Issue {

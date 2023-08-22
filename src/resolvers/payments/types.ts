@@ -5,4 +5,5 @@ export interface ICreatePayment {
   organization_id: number;
   amount: number;
   user_id: number;
+  payment_method_id: number;
 }

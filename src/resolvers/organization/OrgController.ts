@@ -12,10 +12,15 @@ export class OrgController {
     });
   }
 
-  public static queryByID(ID: number) {
+  public static queryByIDs(args: { id: number; user_id: number }) {
     return DB.organization.findUnique({
       where: {
-        id: ID,
+        id: args.id,
+        users: {
+          some: {
+            id: args.user_id,
+          },
+        },
       },
       include: this.includes,
     });

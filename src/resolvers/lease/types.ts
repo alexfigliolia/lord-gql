@@ -10,4 +10,5 @@ export interface CreateLeaseArgs {
   end_date: string;
   users: number[];
   property_id: number;
+  organization_id: number;
 }

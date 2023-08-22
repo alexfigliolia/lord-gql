@@ -4,8 +4,9 @@ import { Schema } from "modules/Schema";
 import type { Context } from "vm";
 import type { AccountFromInvite, IInvite, InviteArgs } from "./types";
 import { InviteController } from "./InviteController";
-import { UserRole, UserType } from "resolvers/user";
+import { UserType } from "resolvers/user";
 import { AuthController } from "resolvers/authentication/AuthController";
+import { UserRole } from "resolvers/roles";
 
 export const InviteType = new GraphQLObjectType({
   name: "invite",
