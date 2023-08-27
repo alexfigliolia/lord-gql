@@ -1,13 +1,9 @@
 import type { GraphQLFieldConfig } from "graphql";
-import {
-  GraphQLInt,
-  GraphQLList,
-  GraphQLString,
-  GraphQLObjectType,
-} from "graphql";
+import { GraphQLInt, GraphQLString, GraphQLObjectType } from "graphql";
 import { UserController } from "./UserController";
 import type { UserArgs } from "./types";
 import { Schema } from "modules/Schema";
+import type { Context } from "resolvers/types";
 
 export const UserType = new GraphQLObjectType({
   name: "user",
@@ -31,11 +27,11 @@ export const UserType = new GraphQLObjectType({
   },
 });
 
-export const user: GraphQLFieldConfig<any, any, UserArgs> = {
-  type: UserType,
+export const user: GraphQLFieldConfig<any, Context, UserArgs> = {
+  type: Schema.nonNull(UserType),
   args: {
     id: {
-      type: GraphQLInt,
+      type: Schema.nonNull(GraphQLInt),
       description: "primary key",
     },
   },
@@ -44,11 +40,11 @@ export const user: GraphQLFieldConfig<any, any, UserArgs> = {
   },
 };
 
-export const users: GraphQLFieldConfig<any, any, UserArgs> = {
-  type: new GraphQLList(UserType),
+export const users: GraphQLFieldConfig<any, Context, UserArgs> = {
+  type: Schema.nonNullArray(UserType),
   args: {
     name: {
-      type: GraphQLString,
+      type: Schema.nonNull(GraphQLString),
       description: "search by name",
     },
   },

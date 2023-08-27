@@ -1,5 +1,6 @@
 import { GraphQLObjectType, GraphQLSchema } from "graphql";
 import { user, users } from "./user";
+import { account } from "./account";
 import { login, logout, onboard, verifyToken } from "./authentication";
 import {
   organization,
@@ -40,6 +41,7 @@ const QueryRoot = new GraphQLObjectType({
     role,
     login,
     logout,
+    account,
     verifyToken,
     organization,
     organizations,
